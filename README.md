@@ -1,8 +1,18 @@
-## Welcome to GitHub Pages
+## Welcome to the Oblivious Sort Project Page!
+You can find the proposal documents here:
+- [Marcia]()
+- [Yuheng]()
+- [Mike]()
 
-You can use the [editor on GitHub](https://github.com/mkpjnx/ObliviousSort/edit/gh-pages/README.md) to maintain and preview the content for your website in Markdown files.
+### Introduction
+This is a project for the f20/s21 iteration of 15-300/400 at CMU under the guidance of Professor [Elaine Shi](http://elaineshi.com/). Our research focus is on oblivious algorithms and namely [bucket oblivious sort](https://arxiv.org/pdf/2008.01765.pdf).
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Agenda
+- [ ] Proposals Completed
+- [ ] Reference Implementation
+- [ ] Cilk parallel fork-join version
+- [ ] Graph Algorithm Demos
+- [ ] ???
 
 ### Markdown
 
