@@ -1,6 +1,6 @@
 ## Welcome to the Oblivious Sort Project Page!
 You can find the proposal documents here:
-- [Marcia]()
+- [Marcia](/proposals/Mike Xu Proposal.pdf)
 - [Yuheng]()
 - [Mike]()
 
