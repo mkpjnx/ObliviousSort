@@ -1,8 +1,8 @@
 ## Welcome to the Oblivious Sort Project Page!
 You can find the proposal documents here:
-- [Marcia](/proposals/Mike Xu Proposal.pdf)
+- [Marcia]()
 - [Yuheng]()
-- [Mike]()
+- [Mike](https://github.com/mkpjnx/ObliviousSort/blob/gh-pages/proposals/Mike%20Xu%20Proposal.pdf)
 
 ### Introduction
 This is a project for the f20/s21 iteration of 15-300/400 at CMU under the guidance of Professor [Elaine Shi](http://elaineshi.com/). Our research focus is on oblivious algorithms and namely [bucket oblivious sort](https://arxiv.org/pdf/2008.01765.pdf).
