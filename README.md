@@ -1,18 +1,19 @@
 ## Welcome to the Oblivious Sort Project Page!
-You can find the proposal documents here:
-- [Marcia]()
-- [Yuheng]()
-- [Mike](https://github.com/mkpjnx/ObliviousSort/blob/gh-pages/proposals/Mike%20Xu%20Proposal.pdf)
+You can find the proposal documents [Proposal](https://github.com/mkpjnx/ObliviousSort/blob/gh-pages/docs/Proposal.pdf)
 
 ### Introduction
-This is a project for the f20/s21 iteration of 15-300/400 at CMU under the guidance of Professor [Elaine Shi](http://elaineshi.com/). Our research focus is on oblivious algorithms and namely [bucket oblivious sort](https://arxiv.org/pdf/2008.01765.pdf).
+This is a project for the f20/s21 iteration of 15-300/400 at CMU under the guidance of Professor [Elaine Shi](http://elaineshi.com/). Our research focus is on oblivious algorithms and namely [bucket oblivious sort](https://arxiv.org/pdf/2008.01765.pdf).  
+We will implement Oblivious Random Assignment as described [here](https://eprint.iacr.org/2020/947.pdf#page=20).
 
 ### Agenda
-- [ ] Proposals Completed
+- [x] Proposals Completed
 - [ ] Reference Implementation
 - [ ] Cilk parallel fork-join version
 - [ ] Graph Algorithm Demos
 - [ ] ???
+
+### Milestone Reports
+- [First Technical Milestone](https://github.com/mkpjnx/ObliviousSort/blob/gh-pages/docs/Proposal.pdf)
 
 ### Markdown
 
