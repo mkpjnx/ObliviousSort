@@ -1,12 +1,25 @@
 load("@rules_cc//cc:defs.bzl", "cc_test")
 
 cc_test (
-    name = "bitonic_sort_test",
+    name = "sort_test",
     srcs = [
-        "common/bitonic_sort_test.cpp",
+        "sort_test.cpp",
     ],
     deps = [
-        "//libUtil:bitonic_sort",
+        "//src:sorting",
+        "@gtest//:gtest",
+        "@gtest//:gtest_main" # Only if hello_test.cc has no main()
+    ],
+)
+
+cc_test (
+    name = "binplace_test",
+    srcs = [
+        "binplace_test.cpp",
+    ],
+    deps = [
+        "//src:sorting",
+        "//src:binplace",
         "@gtest//:gtest",
         "@gtest//:gtest_main" # Only if hello_test.cc has no main()
     ],
