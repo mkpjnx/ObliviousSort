@@ -3,7 +3,7 @@
 #include <iterator>
 #include <vector>
 #include "gtest/gtest.h"
-#include "src/include/binplace.h"
+#include "src/include/util/binplace.h"
  
 std::vector<int> randomVec(size_t len){
   std::vector<int> vec;

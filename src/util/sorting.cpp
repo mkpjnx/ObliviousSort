@@ -1,5 +1,5 @@
-#include "src/include/sorting.h"
-#include "src/include/binplace.h"
+#include "src/include/util/sorting.h"
+#include "src/include/util/binplace.h"
 
 namespace libUtil {
 

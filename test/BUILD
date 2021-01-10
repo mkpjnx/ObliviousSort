@@ -6,7 +6,7 @@ cc_test (
         "sort_test.cpp",
     ],
     deps = [
-        "//src:sorting",
+        "//src:util",
         "@gtest//:gtest",
         "@gtest//:gtest_main" # Only if hello_test.cc has no main()
     ],
@@ -18,8 +18,19 @@ cc_test (
         "binplace_test.cpp",
     ],
     deps = [
-        "//src:sorting",
-        "//src:binplace",
+        "//src:util",
+        "@gtest//:gtest",
+        "@gtest//:gtest_main" # Only if hello_test.cc has no main()
+    ],
+)
+
+cc_test (
+    name = "storage_test",
+    srcs = [
+        "storage_test.cpp",
+    ],
+    deps = [
+        "//src:storage",
         "@gtest//:gtest",
         "@gtest//:gtest_main" # Only if hello_test.cc has no main()
     ],

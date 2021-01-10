@@ -1,9 +1,10 @@
+#include "src/include/util/sorting.h"
+
 #include <random>
 #include <algorithm>
 #include <iterator>
 #include <vector>
 #include "gtest/gtest.h"
-#include "src/include/sorting.h"
  
 std::vector<int> randomVec(size_t len){
   std::vector<int> vec;
