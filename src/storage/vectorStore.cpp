@@ -1,5 +1,4 @@
-#include <cassert>
-#include "src/include/storage/vectorBucketStore.h"
+#include "src/include/storage/vectorStore.h"
 
 namespace libStorage
 {
@@ -25,9 +24,8 @@ void VectorBucketStore<T>::ReadBuckets(std::vector<bucket_id_t> &bids, std::vect
   assert(dst.size() >= this->BucketSize * bids.size());
 
   for(size_t b_index = 0; b_index < bids.size(); b_index++) {
-    assert(bids[b_index] < this->NumBuckets);
-
     size_t bid = bids[b_index];
+    assert(bid < this->NumBuckets);
 
     size_t vec_offset = bid * this->BucketSize;
     size_t dst_offset = b_index * this->BucketSize;
@@ -53,9 +51,9 @@ void VectorBucketStore<T>::WriteBuckets(std::vector<bucket_id_t> &bids, std::vec
   assert(src.size() >= this->BucketSize * bids.size());
 
   for(size_t b_index = 0; b_index < bids.size(); b_index++) {
-    assert(bids[b_index] < this->NumBuckets);
-
     size_t bid = bids[b_index];
+    assert(bid < this->NumBuckets);
+
     size_t vec_offset = bid * this->BucketSize;
     size_t src_offset = b_index * this->BucketSize;
 
@@ -66,4 +64,8 @@ void VectorBucketStore<T>::WriteBuckets(std::vector<bucket_id_t> &bids, std::vec
 }
 
 template class VectorBucketStore<int>;
+
+using libUtil::Labeled;
+template class VectorBucketStore<Labeled<int>>;
+
 } // namespace libStorage

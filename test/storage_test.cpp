@@ -3,7 +3,7 @@
 #include <iterator>
 #include <vector>
 #include "gtest/gtest.h"
-#include "src/include/storage/vectorBucketStore.h"
+#include "src/include/storage/vectorStore.h"
 
 TEST(StorageTest, TestVectorStoreSingleBucket){
   size_t beta = 8; //number of buckets

@@ -11,5 +11,14 @@ cc_library(
     name = "storage",
     srcs = glob(["storage/*.cpp"]),
     hdrs = glob(["include/storage/*.h"]),
+    deps = ["util"],
+    visibility = ["//test:__pkg__"],
+)
+
+cc_library(
+    name = "orba",
+    srcs = glob(["orba/*.cpp"]),
+    hdrs = glob(["include/orba/*.h"]),
+    deps = ["util", "storage"],
     visibility = ["//test:__pkg__"],
 )

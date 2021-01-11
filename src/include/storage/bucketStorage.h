@@ -1,9 +1,8 @@
-#include <cstdint>
 #include <vector>
 
 namespace libStorage {
 
-using bucket_id_t = int32_t;
+using bucket_id_t = size_t;
 
 template<typename T>
 class BucketStorage {

@@ -4,15 +4,15 @@
 namespace libUtil {
 
 template <typename T>
-void Item<T>::BinAssign(std::vector<Item<T>> &vec, size_t beta, size_t Z){
+void BinAssign(std::vector<BinItem<T>> &vec, size_t beta, size_t Z){
   vec.reserve(vec.size() + beta * Z);
   for(size_t b = 0; b < beta; b++){
     for (size_t ind = 0; ind < Z; ind++)
     {
-      vec.push_back(Item(T(), b, ItemType::FILLER));
+      vec.push_back(BinItem<T>(T(), b, ItemType::FILLER));
     }
   }
-  Sorting<Item<T>>::OddEvenMergeSort(vec,0,vec.size());
+  Sorting<BinItem<T>>::OddEvenMergeSort(vec,0,vec.size());
 
   //map to 1's and zero's for scan
   vec[0].offset_ = 0;
@@ -20,7 +20,8 @@ void Item<T>::BinAssign(std::vector<Item<T>> &vec, size_t beta, size_t Z){
     vec[i].offset_ = vec[i].Group == vec[i-1].Group ? 1 : 0;
   }
 
-  //scan forward and mark excess
+  //segmented scan forward and mark excess
+  //TODO: check if normal is excessive
   //TODO: make parallel
   for(size_t i = 0; i < vec.size(); i++){
     vec[i].offset_ = vec[i].offset_ == 0 ? 0 : vec[i-1].offset_ + 1;
@@ -28,10 +29,12 @@ void Item<T>::BinAssign(std::vector<Item<T>> &vec, size_t beta, size_t Z){
   }
 
   //prune out excess
-  Sorting<Item<T>>::OddEvenMergeSort(vec,0,vec.size());
+  Sorting<BinItem<T>>::OddEvenMergeSort(vec,0,vec.size());
   vec.resize(beta*Z);
 
 }
 
-template class Item<int>;
+template class BinItem<int>;
+template class BinItem<Labeled<int>>;
+template void BinAssign<int>(std::vector<BinItem<int>> &vec, size_t beta, size_t Z);
 }
