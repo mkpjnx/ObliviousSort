@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cmath>
 #include "src/include/util/common.h"
 #include "src/include/util/binplace.h"
 #include "src/include/storage/elementStorage.h"
@@ -7,13 +8,19 @@
 namespace libORBA
 {
   using libUtil::Labeled;
+  using libUtil::BinItem;
+  using libStorage::bucket_id_t;
+  using libStorage::elem_id_t;
+  template <typename T>
+  using Itemized = BinItem<Labeled<T>>;
 
   template <typename T>
   class ORBA {
     public:
       ORBA(libStorage::ElementStorage<T> data, libStorage::BucketStorage<Labeled<T>> buckets) 
        : data_(data), buckets_(buckets) {
-         assert(data_.Size <= buckets_.NumBuckets * buckets_.BucketSize);
+         assert(data_.Size <= buckets_.NumBuckets * buckets_.BucketSize / 2);
+         assert(std::ceil(std::log2(buckets_.NumBuckets)) == std::floor(std::log2(buckets_.NumBuckets)));
       }
       
       virtual bool Shuffle(size_t gamma) = 0;

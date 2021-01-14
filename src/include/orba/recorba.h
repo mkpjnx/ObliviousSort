@@ -12,5 +12,6 @@ namespace libORBA
     private:
       void loadData();
       void saveData();
+      std::vector<bucket_id_t> shuffleHelper(std::vector<bucket_id_t>& buckets, size_t offset, size_t gamma);
   };
 } // namespace libORBA
