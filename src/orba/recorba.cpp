@@ -6,8 +6,8 @@ namespace libORBA
   using libStorage::bucket_id_t;
   
   template <typename T>
-  RecORBA<T>::RecORBA(libStorage::ElementStorage<T> data,
-    libStorage::BucketStorage<Labeled<T>> buckets)
+  RecORBA<T>::RecORBA(libStorage::ElementStorage<T> &data,
+    libStorage::BucketStorage<Labeled<T>> &buckets)
    : ORBA<T>(data, buckets) {}
   
   template <typename T>
@@ -31,14 +31,30 @@ namespace libORBA
         elem_id_t eid = bid * elemPerBucket + offset;
         //load an actual element
         if (eid < this->data_.Size && offset < elemPerBucket) {
-          this->data_.ReadElement(eid, &(local[offset].elem));
-          local[offset].real = true;
+          this->data_.ReadElement(eid, local[offset].Elem);
+          local[offset].Type = libUtil::ItemType::NORMAL;
         }
-        local[offset].label = generator();
+        local[offset].Label = generator();
       }
       this->buckets_.WriteBucket(bid, local);
     }
 
+  }
+
+  template <typename T>
+  void RecORBA<T>::saveData(std::vector<bucket_id_t> result) {
+    std::vector<Labeled<T>> local;
+    local.resize(this->buckets_.BucketSize);
+
+    size_t eid = 0;
+    for(auto &itr : result) {
+      this->buckets_.ReadBucket(itr, local);
+      for(auto &item : local){
+        if(item.Type == libUtil::ItemType::NORMAL) {
+          this->data_.WriteElement(eid++, item.Elem);
+        }
+      }
+    }
   }
 
   template <typename T>
@@ -50,9 +66,8 @@ namespace libORBA
     for (bucket_id_t bid = 0; bid < this->buckets_.NumBuckets; bid++) {
       toSort.push_back(bid);
     }
-    shuffleHelper(toSort, 0 , gamma);
-    storeData();
-    //TODO: catch bin assignment overflow
+    std::vector<bucket_id_t> result = shuffleHelper(toSort, 0 , gamma);
+    saveData(result);
     return true;
   }
 
@@ -69,7 +84,7 @@ namespace libORBA
 
   size_t getGroup(libUtil::label_t label, size_t offset, size_t numBuckets){
     size_t mask = (~(0UL)) << log2(numBuckets);
-    return (label >> offset) & mask;
+    return (label >> offset) & ~mask;
   }
 
 
@@ -78,35 +93,26 @@ namespace libORBA
   template <typename T>
   std::vector<bucket_id_t> RecORBA<T>::shuffleHelper(std::vector<bucket_id_t>& buckets, size_t offset, size_t gamma) {
     assert(isPow2(buckets.size()));
-    std::vector<Labeled<T>> localStorage;
 
-    if(this->buckets.size() <= gamma){
+    //invoke BinPlace if beta <= gamma
+    if(buckets.size() <= gamma){
       //assign group tag based on label
+      std::vector<Labeled<T>> localStorage;
       localStorage.resize(buckets.size() * this->buckets_.BucketSize);
       this->buckets_.ReadBuckets(buckets, localStorage);
 
-      std::vector<Itemized<T>> itemized;
-      itemized.reserve(localStorage.size());
-
       //assign group labels for binplace
       for (auto &itr : localStorage){
-        size_t group = getGroup(itr->label, offset, buckets.size());
-        libUtil::ItemType type = itr->real ? libUtil::ItemType::NORMAL : libUtil::ItemType::FILLER;
-        Itemized<T> newItem = BinItem<Labeled<T>>(*itr, group, type);
-        itemized.push_back(newItem);
+        itr.Group = getGroup(itr.Label, offset, buckets.size());
       }
-      libUtil::BinAssign(itemized, buckets.size(), this->buckets_.BucketSize);
-      //TODO sort each bin
-      //write back buckets
-      for (size_t ind = 0; ind < localStorage.size(); ind++){
-        localStorage[ind] = itemized[ind].elem;
-      }
+      libUtil::BinAssign(localStorage, buckets.size(), this->buckets_.BucketSize);
+
       this->buckets_.WriteBuckets(buckets, localStorage);
       return buckets;
       //TODO overflow checks
     }
 
-    //calculating betas, will probably
+    //calculating betas
     size_t beta1 = static_cast<size_t>(std::ceil(std::log2(std::sqrt(buckets.size()))));
     assert(beta1 < 64);
     beta1 = 1UL << beta1;
@@ -114,7 +120,7 @@ namespace libORBA
 
     //store the "matrix" ordering of the buckets
     std::vector<bucket_id_t> firstPass;
-    std::vector<bucket_id_t> result;
+    std::vector<bucket_id_t> secondPass;
 
     //recurse every row
     for (size_t b1 = 0; b1 < beta1; b1 ++) {
@@ -132,11 +138,12 @@ namespace libORBA
         toSort.push_back(firstPass[b1 * beta2 + b2]);
       }
       auto result = shuffleHelper(toSort, offset + log2(beta2), gamma);
-      result.insert(result.end(), result.begin(), result.end());
+      secondPass.insert(secondPass.end(), result.begin(), result.end());
     }
 
-    return result;
+    return secondPass;
 
   }
 
+template class RecORBA<int>;
 } // namespace libORBA

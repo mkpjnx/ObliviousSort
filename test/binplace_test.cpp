@@ -3,6 +3,7 @@
 #include <iterator>
 #include <vector>
 #include "gtest/gtest.h"
+#include "src/include/util/common.h"
 #include "src/include/util/binplace.h"
  
 std::vector<int> randomVec(size_t len){
@@ -25,11 +26,11 @@ TEST(BinplaceTest, TestBinplaceBasic){
   size_t beta = 8;
   size_t Z = 4;
   std::vector<int> vec = randomVec(n);
-  std::vector<libUtil::BinItem<int>> itemized;
+  std::vector<libUtil::Labeled<int>> itemized;
   itemized.reserve(n);
   
   for(auto &itr : vec){
-    itemized.push_back(libUtil::BinItem<int>(itr, size_t(itr) % beta, libUtil::ItemType::NORMAL));
+    itemized.push_back(libUtil::Labeled<int>(itr, size_t(itr) % beta, libUtil::ItemType::NORMAL));
   }
 
   libUtil::BinAssign<int>(itemized, beta, Z);
@@ -45,11 +46,11 @@ TEST(BinplaceTest, TestBinplaceTrimOverflow){
   size_t beta = 10;
   size_t Z = 2;
   std::vector<int> vec = randomVec(n);
-  std::vector<libUtil::BinItem<int>> itemized;
+  std::vector<libUtil::Labeled<int>> itemized;
   itemized.reserve(n);
   
   for(auto &itr : vec){
-    itemized.push_back(libUtil::BinItem<int>(itr, size_t(itr) % beta, libUtil::ItemType::NORMAL));
+    itemized.push_back(libUtil::Labeled<int>(itr, size_t(itr) % beta, libUtil::ItemType::NORMAL));
   }
 
   libUtil::BinAssign<int>(itemized, beta, Z);

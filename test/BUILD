@@ -35,3 +35,15 @@ cc_test (
         "@gtest//:gtest_main" # Only if hello_test.cc has no main()
     ],
 )
+
+cc_test (
+    name = "orba_test",
+    srcs = [
+        "orba_test.cpp",
+    ],
+    deps = [
+        "//src:orba",
+        "@gtest//:gtest",
+        "@gtest//:gtest_main" # Only if hello_test.cc has no main()
+    ],
+)

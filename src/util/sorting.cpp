@@ -1,5 +1,5 @@
 #include "src/include/util/sorting.h"
-#include "src/include/util/binplace.h"
+#include "src/include/util/common.h"
 
 namespace libUtil {
 
@@ -54,5 +54,5 @@ void SORT_TYPE::OddEvenMergeSort(std::vector<T> &vec, size_t begin, size_t end){
 }
 
 template class Sorting<int>;
-template class Sorting<BinItem<int>>;
+template class Sorting<Labeled<int>>;
 }

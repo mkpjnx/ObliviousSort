@@ -10,11 +10,12 @@ template<typename T>
 class VectorElementStore : public ElementStorage<T> {
   public:
     VectorElementStore(size_t size) : ElementStorage<T>(size) {vec_.resize(size);}
-    void Read(elem_id_t eid, T& dst) {
+    void ReadElement(elem_id_t eid, T& dst) {
       assert(eid < this->Size);
       dst = vec_[eid];
     }
-    void Write(elem_id_t eid, T& src) {
+    
+    void WriteElement(elem_id_t eid, T& src) {
       assert(eid < this->Size);
       vec_[eid] = src;
     }

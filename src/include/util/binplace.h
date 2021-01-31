@@ -1,41 +1,48 @@
 #pragma once
 #include "src/include/util/common.h"
+#include "src/include/util/sorting.h"
 #include <vector>
 
 namespace libUtil {
 
-enum class ItemTag {NONE, NORMAL, EXCESS};
-enum class ItemType {NORMAL, FILLER};
-
-template <typename T> class BinItem;
-template <typename T> void BinAssign(std::vector<BinItem<T>> &vec, size_t beta, size_t Z);
 template <typename T>
-class BinItem {
-  public:
-    T Elem;
-    ItemType Type {ItemType::FILLER};
-    size_t Group;
-
-    BinItem() = default;
-    BinItem(T elem, size_t g, ItemType t) : Elem(elem), Type(t), Group(g) {}
-
-    friend bool operator < (const BinItem& lhs, const BinItem& rhs) {
-      //filter excess
-      if (rhs.tag_ == ItemTag::EXCESS || lhs.tag_ == ItemTag::EXCESS) {
-        return rhs.tag_ == ItemTag::EXCESS;
-      }
-      //group ordering
-      if (lhs.Group != rhs.Group) {
-        return lhs.Group < rhs.Group;
-      }
-      //in the same group, filler always last
-      return rhs.Type == ItemType::FILLER;
+void BinAssign(std::vector<Labeled<T>> &vec, size_t beta, size_t Z){
+  vec.reserve(vec.size() + beta * Z);
+  for(size_t b = 0; b < beta; b++){
+    for (size_t ind = 0; ind < Z; ind++)
+    {
+      auto item = Labeled<T>();
+      item.Type = ItemType::BPFILL;
+      item.Group = b;
+      vec.push_back(item);
     }
+  }
 
-    friend void BinAssign<T>(std::vector<BinItem<T>> &vec, size_t beta, size_t Z);
-  private:
-    ItemTag tag_;
-    size_t offset_;
-};
+  //clear out tags
+  for(auto& itr : vec) {
+    itr.tag_ = ItemTag::NONE;
+  }
+
+  Sorting<Labeled<T>>::OddEvenMergeSort(vec,0,vec.size());
+
+  //map to 1's and zero's for scan
+  vec[0].offset_ = 0;
+  for(size_t i = 1; i < vec.size(); i++){
+    vec[i].offset_ = vec[i].Group == vec[i-1].Group ? 1 : 0;
+  }
+
+  //segmented scan forward and mark excess
+  //TODO: check if normal in excessive: signal failure
+  //TODO: make parallel
+  for(size_t i = 0; i < vec.size(); i++){
+    vec[i].offset_ = vec[i].offset_ == 0 ? 0 : vec[i-1].offset_ + 1;
+    vec[i].tag_ = vec[i].offset_ < Z ? ItemTag::NORMAL : ItemTag::EXCESS;
+  }
+
+  //prune out excess
+  Sorting<Labeled<T>>::OddEvenMergeSort(vec,0,vec.size());
+  vec.resize(beta*Z);
+
+}
 
 } // namespace libUtil
