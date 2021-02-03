@@ -1,9 +1,9 @@
 #include "src/include/util/common.h"
-#include "src/include/orba/orba.h"
+#include "src/include/osort/orba.h"
 
 #include <random>
 
-namespace libORBA
+namespace libOSort
 {
   template <typename T>
   class RecORBA : public ORBA<T>{

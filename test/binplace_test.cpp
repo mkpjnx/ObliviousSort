@@ -30,7 +30,11 @@ TEST(BinplaceTest, TestBinplaceBasic){
   itemized.reserve(n);
   
   for(auto &itr : vec){
-    itemized.push_back(libUtil::Labeled<int>(itr, size_t(itr) % beta, libUtil::ItemType::NORMAL));
+    auto item = libUtil::Labeled<int>();
+    item.Elem = itr;
+    item.Group = size_t(itr) % beta;
+    item.Type = libUtil::ItemType::NORMAL;
+    itemized.push_back(item);
   }
 
   libUtil::BinAssign<int>(itemized, beta, Z);
@@ -50,7 +54,11 @@ TEST(BinplaceTest, TestBinplaceTrimOverflow){
   itemized.reserve(n);
   
   for(auto &itr : vec){
-    itemized.push_back(libUtil::Labeled<int>(itr, size_t(itr) % beta, libUtil::ItemType::NORMAL));
+    auto item = libUtil::Labeled<int>();
+    item.Elem = itr;
+    item.Group = size_t(itr) % beta;
+    item.Type = libUtil::ItemType::NORMAL;
+    itemized.push_back(item);
   }
 
   libUtil::BinAssign<int>(itemized, beta, Z);

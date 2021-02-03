@@ -5,7 +5,7 @@
 #include "src/include/storage/elementStorage.h"
 #include "src/include/storage/bucketStorage.h"
 
-namespace libORBA
+namespace libOSort
 {
   using libUtil::Labeled;
   using libStorage::bucket_id_t;

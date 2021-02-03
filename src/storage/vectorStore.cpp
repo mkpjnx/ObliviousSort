@@ -66,6 +66,8 @@ void VectorBucketStore<T>::WriteBuckets(std::vector<bucket_id_t> &bids, std::vec
 template class VectorBucketStore<int>;
 
 using libUtil::Labeled;
+using libUtil::Padded;
 template class VectorBucketStore<Labeled<int>>;
+template class VectorBucketStore<Padded<int>>;
 
 } // namespace libStorage

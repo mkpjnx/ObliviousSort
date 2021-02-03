@@ -1,5 +1,6 @@
 #pragma once
 #include<cstdint>
+#include <cmath>
 #include<vector>
 
 namespace libUtil
@@ -39,7 +40,18 @@ namespace libUtil
     private:
       ItemTag tag_;
       size_t offset_;
-
   };
 
+  template <typename T>
+  struct Padded {
+    T Elem;
+    bool real;
+
+    friend bool operator <(const Padded<T>& lhs, const Padded<T>& rhs) {
+      if(lhs.real && rhs.real) {
+        return lhs.Elem < rhs.Elem;
+      }
+      return lhs.real;
+    }
+  };
 } // namespace libUtil

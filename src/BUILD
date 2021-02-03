@@ -16,9 +16,9 @@ cc_library(
 )
 
 cc_library(
-    name = "orba",
-    srcs = glob(["orba/*.cpp"]),
-    hdrs = glob(["include/orba/*.h"]),
+    name = "osort",
+    srcs = glob(["osort/*.cpp"]),
+    hdrs = glob(["include/osort/*.h"]),
     deps = ["util", "storage"],
     visibility = ["//test:__pkg__"],
 )

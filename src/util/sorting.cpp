@@ -55,4 +55,5 @@ void SORT_TYPE::OddEvenMergeSort(std::vector<T> &vec, size_t begin, size_t end){
 
 template class Sorting<int>;
 template class Sorting<Labeled<int>>;
+template class Sorting<Padded<int>>;
 }

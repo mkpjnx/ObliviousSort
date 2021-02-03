@@ -1,6 +1,6 @@
-#include "src/include/orba/recorba.h"
+#include "src/include/osort/recorba.h"
 
-namespace libORBA
+namespace libOSort
 {
   using libStorage::elem_id_t;
   using libStorage::bucket_id_t;
