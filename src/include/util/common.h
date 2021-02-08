@@ -1,13 +1,21 @@
 #pragma once
 #include<cstdint>
-#include <cmath>
+#include<cmath>
 #include<vector>
+#include<exception>
 
 namespace libUtil
 {
   using label_t = unsigned long;
   enum class ItemTag {NONE, NORMAL, EXCESS};
-  enum class ItemType {NORMAL, FILLER, BPFILL};
+  enum class ItemType {NORMAL, FILLER};
+
+  class binOverflowException: public std::exception{
+    virtual const char* what() const throw()
+    {
+      return "Bin overflow detected";
+    }
+  };
 
   template <typename T> class Labeled;
   template <typename T> void BinAssign(std::vector<Labeled<T>> &vec, size_t beta, size_t Z);
@@ -15,8 +23,9 @@ namespace libUtil
   class Labeled {
     public:
       T Elem;
+      //TODO: make this adjustable
       label_t Label; //Used to store the actual assigned random label
-      size_t Group; //Used to calculate group in bin assignment
+      size_t Group; //Used to calculate group in bin placement
       ItemType Type {ItemType::FILLER};
 
       friend bool operator < (const Labeled& lhs, const Labeled& rhs) {

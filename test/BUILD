@@ -48,11 +48,22 @@ cc_test (
     ],
 )
 
-
 cc_test (
     name = "recsort_test",
     srcs = [
         "recsort_test.cpp",
+    ],
+    deps = [
+        "//src:osort",
+        "@gtest//:gtest",
+        "@gtest//:gtest_main" # Only if hello_test.cc has no main()
+    ],
+)
+
+cc_test (
+    name = "osort_test",
+    srcs = [
+        "osort_test.cpp",
     ],
     deps = [
         "//src:osort",

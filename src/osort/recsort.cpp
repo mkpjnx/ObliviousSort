@@ -137,13 +137,14 @@ namespace libOSort
           //no more elems left to put in buckets
           break;
         }
-        if(newBucket.size() == buckets_.BucketSize){
-          //TODO: bin overflow throw exception? return false?
-          break;
-        }
         //current item is greater than pivot
         if(pivots[bid] < localStorage[currentInd]) {
           break;
+        }
+
+        if(newBucket.size() == buckets_.BucketSize){
+          printf("bin overflow in %lu\n", bid);
+          throw libUtil::binOverflowException();
         }
         newBucket.push_back(localStorage[currentInd]);
         currentInd++;

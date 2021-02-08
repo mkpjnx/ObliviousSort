@@ -12,7 +12,7 @@ void BinAssign(std::vector<Labeled<T>> &vec, size_t beta, size_t Z){
     for (size_t ind = 0; ind < Z; ind++)
     {
       auto item = Labeled<T>();
-      item.Type = ItemType::BPFILL;
+      item.Type = ItemType::FILLER;
       item.Group = b;
       vec.push_back(item);
     }
@@ -28,15 +28,16 @@ void BinAssign(std::vector<Labeled<T>> &vec, size_t beta, size_t Z){
   //map to 1's and zero's for scan
   vec[0].offset_ = 0;
   for(size_t i = 1; i < vec.size(); i++){
-    vec[i].offset_ = vec[i].Group == vec[i-1].Group ? 1 : 0;
-  }
-
-  //segmented scan forward and mark excess
-  //TODO: check if normal in excessive: signal failure
-  //TODO: make parallel
-  for(size_t i = 0; i < vec.size(); i++){
-    vec[i].offset_ = vec[i].offset_ == 0 ? 0 : vec[i-1].offset_ + 1;
+    vec[i].offset_ = 0;
+    if(vec[i].Group == vec[i-1].Group){
+      vec[i].offset_ = vec[i-1].offset_ + 1;
+    }
     vec[i].tag_ = vec[i].offset_ < Z ? ItemTag::NORMAL : ItemTag::EXCESS;
+    //A normal item is marked excess: this is a bin overflow error
+    if(vec[i].tag_ == ItemTag::EXCESS && vec[i].Type == ItemType::NORMAL){
+      printf("bin %lu overflow!\n", vec[i].Group);
+      throw libUtil::binOverflowException();
+    }
   }
 
   //prune out excess

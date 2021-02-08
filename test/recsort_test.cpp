@@ -10,8 +10,8 @@
 #include "src/include/util/common.h"
 
 TEST(RecSortTest, TestRecSort){
-  size_t beta = 512; //number of buckets
-  size_t Z = 32; //bucket size
+  size_t beta = 64; //number of buckets
+  size_t Z = 256; //bucket size
   size_t numElems = beta * Z / 2;
   
   auto elems = libStorage::VectorElementStore<int>(numElems);
