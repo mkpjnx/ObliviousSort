@@ -23,7 +23,7 @@ void BinAssign(std::vector<Labeled<T>> &vec, size_t beta, size_t Z){
     itr.tag_ = ItemTag::NONE;
   }
 
-  Sorting<Labeled<T>>::OddEvenMergeSort(vec,0,vec.size());
+  Sorting<Labeled<T>>::BitonicSort(vec,0,vec.size());
 
   //map to 1's and zero's for scan
   vec[0].offset_ = 0;
@@ -35,13 +35,12 @@ void BinAssign(std::vector<Labeled<T>> &vec, size_t beta, size_t Z){
     vec[i].tag_ = vec[i].offset_ < Z ? ItemTag::NORMAL : ItemTag::EXCESS;
     //A normal item is marked excess: this is a bin overflow error
     if(vec[i].tag_ == ItemTag::EXCESS && vec[i].Type == ItemType::NORMAL){
-      printf("bin %lu overflow!\n", vec[i].Group);
       throw libUtil::binOverflowException();
     }
   }
 
   //prune out excess
-  Sorting<Labeled<T>>::OddEvenMergeSort(vec,0,vec.size());
+  Sorting<Labeled<T>>::BitonicSort(vec,0,vec.size());
   vec.resize(beta*Z);
 
 }
