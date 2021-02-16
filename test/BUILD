@@ -71,3 +71,15 @@ cc_test (
         "@gtest//:gtest_main" # Only if hello_test.cc has no main()
     ],
 )
+
+cc_test (
+    name = "overflow_test",
+    srcs = [
+        "overflow_test.cpp",
+    ],
+    deps = [
+        "//src:osort",
+        "@gtest//:gtest",
+        "@gtest//:gtest_main" # Only if hello_test.cc has no main()
+    ],
+)
