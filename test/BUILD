@@ -83,3 +83,15 @@ cc_test (
         "@gtest//:gtest_main" # Only if hello_test.cc has no main()
     ],
 )
+
+cc_test (
+    name = "recsort_comp_test",
+    srcs = [
+        "recsort_comp_test.cpp",
+    ],
+    deps = [
+        "//src:osort",
+        "@gtest//:gtest",
+        "@gtest//:gtest_main" # Only if hello_test.cc has no main()
+    ],
+)

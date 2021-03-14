@@ -5,6 +5,7 @@
 #include <iterator>
 #include <vector>
 #include "gtest/gtest.h"
+#include "omp.h"
  
 std::vector<int> randomVec(size_t len){
   std::vector<int> vec;
@@ -22,8 +23,8 @@ std::vector<int> randomVec(size_t len){
 }
 
 TEST(SortTest, TestBitonicBasic){
-  std::vector<int> vec = randomVec(128);
-  libUtil::Sorting<int>::BitonicSort(vec,0,128);
+  std::vector<int> vec = randomVec(16384);
+  libUtil::Sorting<int>::BitonicSort(vec,0,16384);
   for (size_t i = 0; i < vec.size() - 1; i++)
   {
     EXPECT_LE(vec[i], vec[i+1]);
@@ -32,9 +33,9 @@ TEST(SortTest, TestBitonicBasic){
 }
 
 TEST(SortTest, TestRecBitonicBasic){
-  std::vector<int> vec = randomVec(128);
-  libUtil::Sorting<int>::RecBitonicSort(vec,0,128,true);
-
+  std::vector<int> vec = randomVec(16384);
+  libUtil::Sorting<int>::RecBitonicSort(vec,0,16384,true);
+  
   /*
   for (size_t i = 0; i < vec.size(); i++) {
     printf("%d\n", vec[i]);
