@@ -5,6 +5,7 @@ cc_library(
     srcs = glob(["util/*.cpp"]),
     hdrs = glob(["include/util/*.h"]),
     visibility = ["//test:__pkg__"],
+    linkopts = ["-lgomp"],
 )
 
 cc_library(

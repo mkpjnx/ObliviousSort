@@ -2,6 +2,7 @@
 #include "src/include/util/common.h"
 #include <stdio.h>
 #include <unistd.h>
+#include <omp.h>
 
 namespace libUtil {
 
@@ -93,11 +94,13 @@ void bitonicMerge(std::vector<T> &vec, Comp &c, size_t begin, size_t end, bool f
     }
 
     // *change to run in parallel
+    #pragma omp parallel for
     for (size_t col = 0; col < cols; col++) {
       bitonicMerge(J[col], c, 0, rows, flag);
     }
 
     // transpose matrix
+    #pragma omp parallel for collapse(2)
     for (size_t i = 0; i < rows; i++) {
       for (size_t j = 0; j < cols; j++) {
         K[i][j] = J[j][i];
@@ -105,6 +108,7 @@ void bitonicMerge(std::vector<T> &vec, Comp &c, size_t begin, size_t end, bool f
     }
 
     // *change to run in parallel
+    #pragma omp parallel for
     for (size_t r = 0; r < rows; r++) {
       bitonicMerge(K[r], c, 0, cols, flag);
     }
@@ -136,8 +140,11 @@ void SORT_TYPE::RecBitonicSort(std::vector<T> &vec, size_t begin, size_t end, bo
     size_t mid = begin + n / 2;
     
     // Fork
-    RecBitonicSort(vec, begin, mid, flag);
-    RecBitonicSort(vec, mid, end, !flag);
+    #pragma omp parallel
+    {
+      RecBitonicSort(vec, begin, mid, flag);
+      RecBitonicSort(vec, mid, end, !flag);
+    }
     // Join
 
     bitonicMerge(vec, c, begin, end, flag);
