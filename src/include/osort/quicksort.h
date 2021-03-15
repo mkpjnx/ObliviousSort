@@ -1,6 +1,9 @@
 #include "src/include/util/common.h"
 #include "src/include/storage/elementStorage.h"
 #include <vector>
+#include <omp.h>
+
+#define QSORT_GRANULARITY 4096
 
 namespace libOSort
 {
@@ -15,8 +18,17 @@ namespace libOSort
           return;
         }
         elem_id_t pivotInd = partition(elems, begin, end);
-        Sort(elems, begin, pivotInd);
-        Sort(elems, pivotInd+1, end);
+        if (end - begin > QSORT_GRANULARITY) {
+          #pragma omp task shared(elems)
+          Sort(elems, begin, pivotInd);
+          #pragma omp task shared(elems)
+          Sort(elems, pivotInd+1, end);
+          #pragma omp taskwait
+        } else {
+          Sort(elems, begin, pivotInd);
+          Sort(elems, pivotInd+1, end);
+        }
+
       }
     private:
       static elem_id_t partition(libStorage::ElementStorage<T> &elems,

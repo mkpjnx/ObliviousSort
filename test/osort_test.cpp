@@ -3,6 +3,8 @@
 #include <iterator>
 #include <vector>
 #include <climits>
+#include <omp.h>
+#include <chrono>
 #include "gtest/gtest.h"
 #include "src/include/storage/vectorStore.h"
 #include "src/include/osort/recorba.h"
@@ -26,7 +28,15 @@ TEST(OSortTest, TestOSort){
 
   auto orba = libOSort::RecORBA<int>(elems, storage);
   orba.Shuffle(4);
-  libOSort::ElemQuicksort<int>::Sort(elems, 0, numElems);
+  auto start = std::chrono::steady_clock::now();
+  #pragma omp parallel
+  {
+    #pragma omp single
+    libOSort::ElemQuicksort<int>::Sort(elems, 0, numElems);
+  }
+  auto end = std::chrono::steady_clock::now();
+  std::chrono::duration<double> elapsed_seconds = end-start;
+  std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
   
   int prev = INT_MIN;
   for (size_t eid = 0; eid < numElems; eid++) {

@@ -35,7 +35,7 @@ size_t testBucket(size_t numElems, size_t Z, size_t runs){
 
 TEST(OverflowTest, TestOverflow){
   size_t numElems = 1024;
-  size_t runs = 500;
+  size_t runs = 100;
   for(size_t Z = 2; Z <= numElems; Z *= 2) {
     size_t count = testBucket(numElems, Z, runs);
     printf("Z=%ld \t overflow rate: %ld/%ld\n", Z, count, runs);

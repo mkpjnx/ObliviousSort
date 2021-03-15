@@ -66,8 +66,8 @@ namespace libOSort
     for (bucket_id_t bid = 0; bid < this->buckets_.NumBuckets; bid++) {
       toSort.push_back(bid);
     }
-    std::vector<bucket_id_t> result = shuffleHelper(toSort, 0 , gamma);
-    saveData(result);
+    shuffleHelper(toSort, 0 , gamma, 0, toSort.size());
+    saveData(toSort);
     return true;
   }
 
@@ -87,62 +87,74 @@ namespace libOSort
     return (label >> offset) & ~mask;
   }
 
+  void transpose(std::vector<bucket_id_t>& buckets, size_t begin, size_t end, size_t rows){
+    size_t cols = (end - begin)/rows;
+    std::vector<bucket_id_t> temp;
+    temp.resize(end - begin);
+    for(size_t i = 0; i < rows; i++){
+      for(size_t j = 0; j < cols; j++){
+        temp[j* rows + i] = buckets[begin + i * cols + j];
+      }
+    }
+    for(size_t i = 0; i < end - begin; i++) {
+      buckets[i + begin] = temp[i];
+    }
+  }
 
   //recursive helper function
   //returns the sorted ordering of buckets
   template <typename T>
-  std::vector<bucket_id_t> RecORBA<T>::shuffleHelper(std::vector<bucket_id_t>& buckets, size_t offset, size_t gamma) {
-    assert(isPow2(buckets.size()));
+  void RecORBA<T>::shuffleHelper(std::vector<bucket_id_t>& buckets,
+    size_t offset, size_t gamma, size_t begin, size_t end) {
+    assert(isPow2(end - begin));
+    size_t numBuckets = end - begin;
 
     //invoke BinPlace if beta <= gamma
-    if(buckets.size() <= gamma){
+    if(numBuckets <= gamma){
       //assign group tag based on label
       std::vector<Labeled<T>> localStorage;
-      localStorage.resize(buckets.size() * this->buckets_.BucketSize);
-      this->buckets_.ReadBuckets(buckets, localStorage);
-
+      auto temp = std::vector<bucket_id_t>(
+        buckets.begin() + begin, buckets.begin() + end);
+      
+      localStorage.resize(numBuckets * this->buckets_.BucketSize);
+      this->buckets_.ReadBuckets(temp, localStorage);
       //assign group labels for binplace
       for (auto &itr : localStorage){
-        itr.Group = getGroup(itr.Label, offset, buckets.size());
+        itr.Group = getGroup(itr.Label, offset, numBuckets);
       }
-      libUtil::BinAssign(localStorage, buckets.size(), this->buckets_.BucketSize);
 
-      this->buckets_.WriteBuckets(buckets, localStorage);
-      return buckets;
-      //TODO overflow checks
+      libUtil::BinAssign(localStorage, numBuckets, this->buckets_.BucketSize);
+
+      this->buckets_.WriteBuckets(temp, localStorage);
+      return;
     }
 
     //calculating betas
-    size_t beta1 = static_cast<size_t>(std::ceil(std::log2(std::sqrt(buckets.size()))));
+    size_t beta1 = static_cast<size_t>(std::ceil(std::log2(std::sqrt(numBuckets))));
     assert(beta1 < 64);
     beta1 = 1UL << beta1;
-    size_t beta2 = buckets.size() / beta1;
-
-    //store the "matrix" ordering of the buckets
-    std::vector<bucket_id_t> firstPass;
-    std::vector<bucket_id_t> secondPass;
+    size_t beta2 = numBuckets / beta1;
 
     //recurse every row
+    #pragma omp taskloop shared(buckets)
     for (size_t b1 = 0; b1 < beta1; b1 ++) {
-      auto begin = buckets.begin() + b1 * beta2;
-      auto end = begin + beta2;
-      auto toSort = std::vector<bucket_id_t>(begin, end);
-      auto result = shuffleHelper(toSort, offset, gamma);
-      firstPass.insert(firstPass.end(), result.begin(), result.end());
+      auto rowBegin = begin + b1 * beta2;
+      auto rowEnd = rowBegin + beta2;
+      shuffleHelper(buckets, offset, gamma, rowBegin, rowEnd);
     }
+    #pragma omp taskwait
+
+    //transpose
+    transpose(buckets, begin, end, beta1);
 
     //recurse every column
+    #pragma omp taskloop shared(buckets)
     for (size_t b2 = 0; b2 < beta2; b2 ++) {
-      auto toSort = std::vector<bucket_id_t>();
-      for (size_t b1 = 0; b1 < beta1; b1 ++) {
-        toSort.push_back(firstPass[b1 * beta2 + b2]);
-      }
-      auto result = shuffleHelper(toSort, offset + log2(beta2), gamma);
-      secondPass.insert(secondPass.end(), result.begin(), result.end());
+      auto rowBegin = begin + b2 * beta1;
+      auto rowEnd = rowBegin + beta1;
+      shuffleHelper(buckets, offset + log2(beta2), gamma, rowBegin, rowEnd);
     }
-
-    return secondPass;
-
+    #pragma omp taskwait
   }
 
 template class RecORBA<int>;
