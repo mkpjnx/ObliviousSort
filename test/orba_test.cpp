@@ -8,7 +8,7 @@
 #include "src/include/util/common.h"
 
 TEST(OrbaTest, TestORBA){
-  size_t beta = 32; //number of buckets
+  size_t beta = 8; //number of buckets
   size_t Z = 32; //bucket size
   size_t numElems = beta * Z / 2;
   
@@ -23,7 +23,7 @@ TEST(OrbaTest, TestORBA){
   }
 
   auto orba = libOSort::RecORBA<int>(elems, storage);
-  orba.Shuffle(4);
+  orba.Shuffle(2);
 
   for (size_t eid = 0; eid < numElems; eid++) {
     int num;

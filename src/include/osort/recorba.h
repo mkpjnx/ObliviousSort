@@ -1,6 +1,6 @@
 #include "src/include/util/common.h"
 #include "src/include/osort/orba.h"
-
+#include <omp.h>
 #include <random>
 
 namespace libOSort
@@ -13,6 +13,7 @@ namespace libOSort
     private:
       void loadData();
       void saveData(std::vector<bucket_id_t> result);
-      std::vector<bucket_id_t> shuffleHelper(std::vector<bucket_id_t>& buckets, size_t offset, size_t gamma);
+      void shuffleHelper(std::vector<bucket_id_t>& buckets,
+        size_t offset, size_t gamma, size_t begin, size_t end);
   };
 } // namespace libORBA

@@ -24,9 +24,9 @@ std::vector<int> randomVec(size_t len){
   return vec;
 }
 
-void recBitonicIter() {
-  std::vector<int> vec = randomVec(16384);
-  libUtil::Sorting<int>::RecBitonicSort(vec,0,16384,true);
+void recBitonicIter(size_t numElems) {
+  std::vector<int> vec = randomVec(numElems);
+  libUtil::Sorting<int>::RecBitonicSort(vec,0,numElems,true);
   
   for (size_t i = 0; i < vec.size() - 1; i++)
   {
@@ -34,9 +34,7 @@ void recBitonicIter() {
   }
 }
 
-void recORBAiter() {
-  size_t beta = 64; //number of buckets
-  size_t Z = 256; //bucket size
+void recORBAiter(size_t beta, size_t Z) {
   size_t numElems = beta * Z / 2;
   
   auto elems = libStorage::VectorElementStore<int>(numElems);
@@ -68,9 +66,15 @@ void recORBAiter() {
 }
 
 TEST(SortTest, TestRedBitonicComp){
-  recBitonicIter();
+  size_t beta = 64; //number of buckets
+  size_t Z = 256; //bucket size
+  
+  recBitonicIter(beta * Z);
 }
 
 TEST(SortTest, TestRecORBAComp){
-  recORBAiter();
+  size_t beta = 64; //number of buckets
+  size_t Z = 256; //bucket size
+  
+  recORBAiter(beta, Z);
 }

@@ -8,17 +8,17 @@ namespace libUtil {
 
 SORT_TEMPLATE_ARGS
 void cas(std::vector<T> &vec, size_t i, size_t j, Comp &c, bool inverted){
-  T elemI = T(vec[i]); //copy construct
-  T elemJ = T(vec[j]);
-  bool isLess = c(elemI, elemJ);
-  if (inverted == isLess)
+  T tmp = T(vec[i]); //copy construct
+  if (inverted == (vec[i] < vec[j]))
   {
-    vec[i] = elemJ;
-    vec[j] = elemI;
+    vec[i] = vec[j];
+    vec[j] = tmp;
   } else {
-    vec[i] = elemI;
-    vec[j] = elemJ;
+    vec[i] = tmp;
+    vec[j] = vec[j];
   }
+
+  
 }
 
 SORT_TEMPLATE_ARGS
