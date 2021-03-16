@@ -12,8 +12,10 @@ namespace libOSort
       bool Shuffle(size_t gamma) override;
     private:
       void loadData();
-      void saveData(std::vector<bucket_id_t> result);
-      void shuffleHelper(std::vector<bucket_id_t>& buckets,
-        size_t offset, size_t gamma, size_t begin, size_t end);
+      void saveData();
+      void shuffleHelper(size_t offset, size_t gamma, size_t begin, size_t end);
+      void transpose(size_t begin, size_t end, size_t rows);
+      std::vector<bucket_id_t> bucketOrder_;
+      std::vector<bucket_id_t> tempBuckets_;
   };
 } // namespace libORBA

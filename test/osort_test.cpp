@@ -38,11 +38,11 @@ TEST(OSortTest, TestOSort){
   std::chrono::duration<double> elapsed_seconds = end-start;
   std::cout << "elapsed time: " << elapsed_seconds.count() << "s\n";
   
-  int prev = INT_MIN;
+  int prev = -1;
   for (size_t eid = 0; eid < numElems; eid++) {
     int num;
     elems.ReadElement(eid, num);
-    EXPECT_LE(prev, num);
+    EXPECT_EQ(prev, num-1);
     prev = num;
   }
   printf("\n");

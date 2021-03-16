@@ -63,4 +63,19 @@ namespace libUtil
       return lhs.real;
     }
   };
+
+  template <typename T>
+  void recTranspose(std::vector<T> &A, size_t rows, size_t cols, size_t offset,
+                    std::vector<T> &B, size_t i, size_t j, size_t h, size_t w){
+    if (!w || !h) return;
+    if (w == 1 && h == 1) {
+      B[j*rows + i + offset] = A[i * cols + j + offset];
+    } else if (w > h) {
+      recTranspose(A, rows, cols, offset, B, i, j, h, w/2);
+      recTranspose(A, rows, cols, offset, B, i, j+w/2 , h, w - w/2);
+    } else {
+      recTranspose(A, rows, cols, offset, B, i, j, h/2, w);
+      recTranspose(A, rows, cols, offset, B, i + h/2, j , h - h/2, w);
+    }
+  }
 } // namespace libUtil
