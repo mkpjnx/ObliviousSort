@@ -124,6 +124,20 @@ cc_binary (
     ],
 )
 
+cc_binary (
+    name = "parallel_baseline",
+    copts =["-fopenmp"],
+    linkopts= ["-lgomp"],
+    srcs = [
+        "parallel_baseline.cpp",
+    ],
+    deps = [
+        "//src:util",
+        "@gtest//:gtest",
+        "@gtest//:gtest_main" # Only if hello_test.cc has no main()
+    ],
+)
+
 
 cc_test (
     name = "recsort_comp_test",

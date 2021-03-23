@@ -135,6 +135,11 @@ int main(int argc, char **argv) {
       ttestN = atoi(argv[++i]);
       ttestTrials = atoi(argv[++i]);
       if(!ttestTrials || !ttestN) printUsage(argv);
+    } else if (std::string(argv[i]) == "-b") {
+      testThr = true;
+      if(i+1 >= argc) printUsage(argv);
+      bucketSize = atoi(argv[++i]);
+      if(!bucketSize) printUsage(argv);
     } else {
       printUsage(argv);
     }
