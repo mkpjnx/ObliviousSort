@@ -93,7 +93,7 @@ namespace libOSort
   void RecORBA<T>::transpose(size_t begin, size_t end, size_t rows){
     size_t cols = (end - begin)/rows;
     // copy to temp
-    #pragma omp parallel for
+    //#pragma omp parallel for
     for(size_t i = begin; i < end; i++) {
       tempBuckets_[i] = bucketOrder_[i];
     }
@@ -143,27 +143,25 @@ namespace libOSort
     size_t beta2 = numBuckets / beta1;
 
     //recurse every row
-    #pragma omp parallel for shared(bucketOrder_)
-    //#pragma omp taskloop shared(bucketOrder_)
+    #pragma omp taskloop shared(bucketOrder_)
     for (size_t b1 = 0; b1 < beta1; b1 ++) {
       auto rowBegin = begin + b1 * beta2;
       auto rowEnd = rowBegin + beta2;
       shuffleHelper(offset, gamma, rowBegin, rowEnd);
     }
-    //#pragma omp taskwait
+    #pragma omp taskwait
 
     //transpose bucketOrder subrange
     transpose(begin, end, beta1);
 
     //recurse every column
-    #pragma omp parallel for shared(bucketOrder_)
-    //#pragma omp taskloop shared(bucketOrder_)
+    #pragma omp taskloop shared(bucketOrder_)
     for (size_t b2 = 0; b2 < beta2; b2 ++) {
       auto rowBegin = begin + b2 * beta1;
       auto rowEnd = rowBegin + beta1;
       shuffleHelper(offset + log2(beta2), gamma, rowBegin, rowEnd);
     }
-    //#pragma omp taskwait
+    #pragma omp taskwait
   }
 
 template class RecORBA<int>;
