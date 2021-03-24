@@ -8,8 +8,7 @@
 #include <iostream>
 
 void worker(std::vector<int> &vec, size_t itr, size_t offset, size_t N) {
-  std::random_device rd;
-  std::mt19937 g(rd());
+  std::mt19937 g(omp_get_thread_num());
   for(size_t i = 0; i < itr; i ++) {
     for(size_t j = 0; j < N; j ++){
       vec[j + offset] = g();
@@ -30,16 +29,9 @@ double timeWorkers(size_t itr, size_t total, size_t numThreads, size_t task_size
 
   omp_set_num_threads(numThreads);
   auto parastart = std::chrono::steady_clock::now();
-  #pragma omp parallel
-  {
-    #pragma omp single
-    {
-      for (size_t i = 0; i <= total - task_size; i+= task_size) {
-        #pragma omp task
-        worker(vec, itr, i, task_size);
-      }
-    }
-      #pragma omp taskwait
+  #pragma omp parallel for
+  for (size_t i = 0; i < total - task_size; i+= task_size) {
+    worker(vec, itr, i, task_size);
   }
   
   auto paraend = std::chrono::steady_clock::now();

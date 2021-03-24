@@ -29,12 +29,12 @@ namespace libOSort
       for(size_t offset = 0; offset < local.size(); offset++) {
         //TODO overflow check
         elem_id_t eid = bid * elemPerBucket + offset;
-        //load an actual element
+        //load an actual element up until bucket is half full
         if (eid < this->data_.Size && offset < elemPerBucket) {
           this->data_.ReadElement(eid, local[offset].Elem);
           local[offset].Type = libUtil::ItemType::NORMAL;
         }
-        local[offset].Label = generator();
+        local[offset].Label = generator(); // random label
       }
       this->buckets_.WriteBucket(bid, local);
     }
@@ -118,6 +118,7 @@ namespace libOSort
     //invoke BinPlace if beta <= gamma
     if(numBuckets <= gamma){
       //assign group tag based on label
+      // ... //
       std::vector<Labeled<T>> localStorage;
       auto temp = std::vector<bucket_id_t>(
         bucketOrder_.begin() + begin, bucketOrder_.begin() + end);
@@ -142,25 +143,27 @@ namespace libOSort
     size_t beta2 = numBuckets / beta1;
 
     //recurse every row
-    #pragma omp taskloop shared(bucketOrder_)
+    #pragma omp parallel for shared(bucketOrder_)
+    //#pragma omp taskloop shared(bucketOrder_)
     for (size_t b1 = 0; b1 < beta1; b1 ++) {
       auto rowBegin = begin + b1 * beta2;
       auto rowEnd = rowBegin + beta2;
       shuffleHelper(offset, gamma, rowBegin, rowEnd);
     }
-    #pragma omp taskwait
+    //#pragma omp taskwait
 
     //transpose bucketOrder subrange
     transpose(begin, end, beta1);
 
     //recurse every column
-    #pragma omp taskloop shared(bucketOrder_)
+    #pragma omp parallel for shared(bucketOrder_)
+    //#pragma omp taskloop shared(bucketOrder_)
     for (size_t b2 = 0; b2 < beta2; b2 ++) {
       auto rowBegin = begin + b2 * beta1;
       auto rowEnd = rowBegin + beta1;
       shuffleHelper(offset + log2(beta2), gamma, rowBegin, rowEnd);
     }
-    #pragma omp taskwait
+    //#pragma omp taskwait
   }
 
 template class RecORBA<int>;
