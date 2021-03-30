@@ -33,9 +33,9 @@ TEST(SortTest, TestBitonicBasic){
 }
 
 TEST(SortTest, TestRecBitonicBasic){
-  std::vector<int> vec = randomVec(16384);
-  libUtil::Sorting<int>::RecBitonicSort(vec,0,16384,true);
-  
+  std::vector<int> vec = randomVec(16384*4);
+  libUtil::Sorting<int>::RecBitonicSort(vec,0,16384*4,true);
+
   /*
   for (size_t i = 0; i < vec.size(); i++) {
     printf("%d\n", vec[i]);

@@ -78,3 +78,12 @@ TEST(SortTest, TestRecORBAComp){
   
   recORBAiter(beta, Z);
 }
+
+TEST(SortTest, TestBaseline){
+  #pragma omp parallel for collapse(2) num_threads(16)
+  for (size_t i = 0; i < 1000000; i++) {
+    for (size_t j = 0; j < 1000; j++) {
+      int x = log(256);
+    }
+  }
+}

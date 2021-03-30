@@ -71,10 +71,7 @@ void bitonicMerge(std::vector<T> &vec, Comp &c, size_t begin, size_t end, bool f
     size_t rows = n / cols + (n % cols != 0 ? 1 : 0);
 
     // get smallest element
-    T smallestElement = vec[end - 1];
-    if (c(vec[begin], vec[end - 1])) {
-      smallestElement = vec[begin];
-    }
+    T smallestElement = (c(vec[begin], vec[end - 1])) ? vec[begin] : vec[end - 1];
 
     // create matrix
     std::vector<std::vector<T> > K(rows, std::vector<T>(cols, smallestElement));
@@ -92,6 +89,24 @@ void bitonicMerge(std::vector<T> &vec, Comp &c, size_t begin, size_t end, bool f
           break;
       }
     }
+    
+    
+    // fill matrix
+    /*
+    #pragma omp parallel for
+    for (size_t curr = begin; curr < end; curr++) {
+      size_t i = (curr - begin) % cols;
+      size_t j = (curr - begin) / cols;
+      K[j][i] = vec[curr];
+    }
+    
+    #pragma omp parallel for collapse(2)
+    for (size_t i = 0; i < cols; i++) {
+      for (size_t j = 0; j < rows; j++) {
+        J[i][j] = K[j][i];
+      }
+    }
+    */
 
     // *change to run in parallel
     #pragma omp parallel for
@@ -140,13 +155,22 @@ void SORT_TYPE::RecBitonicSort(std::vector<T> &vec, size_t begin, size_t end, bo
     size_t mid = begin + n / 2;
     
     // Fork
-    #pragma omp parallel
+    /*
+    #pragma omp parallel for
+    for (size_t i = 0; i < 2; i++) {
+      if (i == 0) {
+        RecBitonicSort(vec, begin, mid, flag);
+      } else {
+        RecBitonicSort(vec, mid, end, !flag);
+      }
+    }*/
+    
     {
       RecBitonicSort(vec, begin, mid, flag);
       RecBitonicSort(vec, mid, end, !flag);
     }
-    // Join
 
+    // Join
     bitonicMerge(vec, c, begin, end, flag);
   }
 }
