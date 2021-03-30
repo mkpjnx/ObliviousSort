@@ -53,8 +53,6 @@ double timeOrba(size_t N, size_t numThreads, size_t bucketSize){
     #pragma omp single
     orba.Shuffle(gamma);
 
-    #pragma omp single
-    libOSort::ElemQuicksort<int>::Sort(elems, 0, N);
   }
   auto paraend = std::chrono::steady_clock::now();
   std::chrono::duration<double> elapsed_seconds = paraend-parastart;
