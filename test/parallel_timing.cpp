@@ -36,7 +36,8 @@ double timeOrba(size_t N, size_t numThreads, size_t bucketSize){
   // set gamma = log_2(n), padded to pow2
   size_t gamma = (size_t)(std::ceil(std::log2(N)));
   gamma =  1UL << (size_t)(std::ceil(std::log2(gamma)));
-  omp_set_num_threads(omp_get_num_procs());
+  gamma = 4;
+
   #pragma omp parallel for shared(elems) schedule(static)
   for (size_t eid = 0; eid < elems.Size; eid++) {
     int num = eid;
@@ -46,16 +47,9 @@ double timeOrba(size_t N, size_t numThreads, size_t bucketSize){
   auto orba = libOSort::RecORBA<int>(elems, storage);
   //randomElems(elems);
 
-  omp_set_num_threads(numThreads);
   auto parastart = std::chrono::steady_clock::now();
-  #pragma omp parallel
-  {
-    #pragma omp single
-    orba.Shuffle(gamma);
-
-    #pragma omp single
-    libOSort::ElemQuicksort<int>::Sort(elems, 0, N);
-  }
+  omp_set_nested(omp_get_max_active_levels());
+  orba.Shuffle(gamma);
   auto paraend = std::chrono::steady_clock::now();
   std::chrono::duration<double> elapsed_seconds = paraend-parastart;
   return elapsed_seconds.count();
