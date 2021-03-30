@@ -36,7 +36,6 @@ double timeOrba(size_t N, size_t numThreads, size_t bucketSize){
   // set gamma = log_2(n), padded to pow2
   size_t gamma = (size_t)(std::ceil(std::log2(N)));
   gamma =  1UL << (size_t)(std::ceil(std::log2(gamma)));
-  gamma = 4;
 
   #pragma omp parallel for shared(elems) schedule(static)
   for (size_t eid = 0; eid < elems.Size; eid++) {
