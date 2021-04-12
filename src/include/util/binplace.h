@@ -7,6 +7,7 @@ namespace libUtil {
 
 template <typename T>
 void BinAssign(std::vector<Labeled<T>> &vec, size_t beta, size_t Z){
+  // double the bins and add beta fillers per bin
   vec.reserve(vec.size() + beta * Z);
   for(size_t b = 0; b < beta; b++){
     for (size_t ind = 0; ind < Z; ind++)
@@ -23,9 +24,10 @@ void BinAssign(std::vector<Labeled<T>> &vec, size_t beta, size_t Z){
     itr.tag_ = ItemTag::NONE;
   }
 
+  // sort into groups with no tag
   Sorting<Labeled<T>>::BitonicSort(vec,0,vec.size());
 
-  //map to 1's and zero's for scan
+  // map to 1's and zero's for scan
   vec[0].offset_ = 0;
   for(size_t i = 1; i < vec.size(); i++){
     vec[i].offset_ = 0;

@@ -73,17 +73,35 @@ namespace libOSort
     return true;
   }
 
-  //some utility functions to find group numberings and sizes
+  /*********************
+   * UTILITY FUNCTIONS *
+   *********************/
+
+  /**
+   * @brief return log_2(n), rounded down
+   * 
+   * @param n 
+   * @return size_t 
+   */
   inline size_t log2(size_t n){
     size_t res = 0;
     for (; n > 1; n >>= 1, ++res);
     return res;
   }
 
-  bool isPow2(size_t n){
+  inline bool isPow2(size_t n){
     return (1UL << log2(n)) == n;
   }
 
+  /**
+   * @brief Get the Group assignment of an object
+   * 
+   * @param label label of the object
+   * @param offset offset of the label to use to calculate group 
+   * @param numBuckets number of buckets to distribute group assignments over
+   *                   determines how many bits of the label are used
+   * @return size_t the group number calculated
+   */
   size_t getGroup(libUtil::label_t label, size_t offset, size_t numBuckets){
     size_t mask = (~(0UL)) << log2(numBuckets);
     return (label >> offset) & ~mask;
@@ -101,15 +119,6 @@ namespace libOSort
       bucketOrder_, 0, 0, rows, cols);
   }
 
-  /**
-  * @brief Recursive helper for ORBA
-  * 
-  * @tparam T the type we are shuffling
-  * @param offset defines offset of the random label we are considering
-  * @param gamma 
-  * @param begin defines the begin index (inclusive) of the bucketorder_
-  * @param end defines the begin index (exclusive) of the bucketorder_
-  */
   template <typename T>
   void RecORBA<T>::shuffleHelper(size_t offset, size_t gamma, size_t begin, size_t end) {
     assert(isPow2(end - begin));
