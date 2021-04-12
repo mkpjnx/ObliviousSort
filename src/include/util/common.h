@@ -12,7 +12,7 @@ enum class ItemType { NORMAL, FILLER };
 /**
  * @brief exception thrown when bin assignment algorithm detects an overflow
  */
-class binOverflowException : public std::runtime_error {
+class binOverflowException : public std::exception {
   virtual const char *what() const throw() { return "Bin overflow detected"; }
 };
 
