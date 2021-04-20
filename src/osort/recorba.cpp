@@ -19,23 +19,32 @@ namespace libOSort
     std::vector<Labeled<T>> local;
     local.resize(this->buckets_.BucketSize);
 
+    // elemPerBucket is half of bucket size
     size_t elemPerBucket = local.size()/2;
 
+    // fill each bucket to half capacity
     for (bucket_id_t bid = 0; bid < this->buckets_.NumBuckets; bid++) {
+      
       //zero out readbuf
       std::fill(local.begin(), local.end(), Labeled<T>());
 
-      //load eid's
+      //load elems into bucket
       for(size_t offset = 0; offset < local.size(); offset++) {
+
         //TODO overflow check
         elem_id_t eid = bid * elemPerBucket + offset;
+        local[offset].Label = generator(); // get random label
+        local[offset].Type = libUtil::ItemType::FILLER; // default to filler
+
         //load an actual element up until bucket is half full
         if (eid < this->data_.Size && offset < elemPerBucket) {
+          // load into labeled container
           this->data_.ReadElement(eid, local[offset].Elem);
           local[offset].Type = libUtil::ItemType::NORMAL;
         }
-        local[offset].Label = generator(); // random label
       }
+
+      // write bucket to storage device
       this->buckets_.WriteBucket(bid, local);
     }
 
@@ -60,14 +69,17 @@ namespace libOSort
   template <typename T>
   bool RecORBA<T>::Shuffle(size_t gamma) {
     loadData();
-    //invoke helper function for recursive shuffling
+  
     bucketOrder_.resize(this->buckets_.NumBuckets);
     tempBuckets_.resize(this->buckets_.NumBuckets);
-
+    // the initial bucket order is sequential, this changes over time
+    // via recursively smaller transposes
     #pragma omp parallel for
     for (bucket_id_t bid = 0; bid < this->buckets_.NumBuckets; bid++) {
       bucketOrder_[bid] = bid;
     }
+
+    //invoke helper function for recursive shuffling
     shuffleHelper(0 , gamma, 0, bucketOrder_.size());
     saveData();
     return true;
@@ -115,6 +127,8 @@ namespace libOSort
     for(size_t i = begin; i < end; i++) {
       tempBuckets_[i] = bucketOrder_[i];
     }
+
+    // transpose from temp and store into bucketOrder
     libUtil::recTranspose<bucket_id_t>(tempBuckets_, rows, cols, begin,
       bucketOrder_, 0, 0, rows, cols);
   }

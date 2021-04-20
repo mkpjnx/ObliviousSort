@@ -22,9 +22,9 @@ std::vector<int> randomVec(size_t len){
 }
 
 TEST(BinplaceTest, TestBinplaceBasic){
-  size_t n = 32;
   size_t beta = 8;
   size_t Z = 4;
+  size_t n = beta * Z;
   std::vector<int> vec = randomVec(n);
   std::vector<libUtil::Labeled<int>> itemized;
   itemized.reserve(n);
@@ -45,8 +45,10 @@ TEST(BinplaceTest, TestBinplaceBasic){
   }
 }
 
-TEST(BinplaceTest, TestBinplaceTrimOverflow){
-  size_t n = 50;
+// Test that we throw an exception on bin overflow
+TEST(BinplaceTest, TestBinplaceOverflow){
+  // note: for bitonic sort to work, n + beta * z must be a power of 2
+  size_t n = 108;
   size_t beta = 10;
   size_t Z = 2;
   std::vector<int> vec = randomVec(n);
@@ -60,11 +62,7 @@ TEST(BinplaceTest, TestBinplaceTrimOverflow){
     item.Type = libUtil::ItemType::NORMAL;
     itemized.push_back(item);
   }
-
-  libUtil::BinAssign<int>(itemized, beta, Z);
-  for (size_t i = 0; i < beta * Z; i++)
-  {
-    printf("index: %ld \t item: %d \t bin: %ld\n", i, itemized[i].Elem, itemized[i].Group);
-    EXPECT_EQ(itemized[i].Group, i / Z );
-  }
+  EXPECT_THROW({
+    libUtil::BinAssign<int>(itemized, beta, Z);
+  }, libUtil::binOverflowException );
 }

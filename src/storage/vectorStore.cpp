@@ -11,8 +11,8 @@ VectorBucketStore<T>::VectorBucketStore(size_t NumBuckets, size_t BucketSize)
 
 template<typename T>
 void VectorBucketStore<T>::ReadBucket(bucket_id_t bid, std::vector<T>& dst){
-  assert(dst.size() >= this->BucketSize);
-  assert(bid < this->NumBuckets);
+  assert(dst.size() >= this->BucketSize); // enough space in dst
+  assert(bid < this->NumBuckets); // valid bucket id
   size_t offset = bid * this->BucketSize;
   for(size_t ind = 0; ind < this->BucketSize; ind++) {
     dst[ind] = vec_[ind + offset];

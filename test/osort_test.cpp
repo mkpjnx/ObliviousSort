@@ -13,7 +13,7 @@
 
 TEST(OSortTest, TestOSort){
   size_t beta = 512; //number of buckets
-  size_t Z = 64; //bucket size
+  size_t Z = 512; //bucket size
   size_t numElems = beta * Z / 2;
   
   auto elems = libStorage::VectorElementStore<int>(numElems);
