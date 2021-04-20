@@ -30,6 +30,7 @@ template <typename T> class Labeled;
  */
 template <typename T>
 void BinAssign(std::vector<Labeled<T>> &vec, size_t beta, size_t Z);
+
 template <typename T> class Labeled {
 public:
   T Elem;
@@ -38,6 +39,14 @@ public:
   group_t Group;  // Used to calculate group in bin placement
   ItemType Type{ItemType::FILLER};
 
+  /**
+   * @brief This operator is used by BitonicSort in BinAssign(), and captures
+   * the implicit order between groups and within groups. 
+   * 
+   * @param lhs 
+   * @param rhs 
+   * @return true if lhs should be before rhs, false otherwise
+   */
   friend bool operator<(const Labeled &lhs, const Labeled &rhs) {
     if (rhs.Type == ItemType::EXCESS || lhs.Type == ItemType::EXCESS) {
       return rhs.Type == ItemType::EXCESS;
