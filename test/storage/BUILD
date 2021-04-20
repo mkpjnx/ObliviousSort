@@ -1,12 +1,12 @@
 load("@rules_cc//cc:defs.bzl", "cc_test")
 
 cc_test (
-    name = "recsort_comp_test",
+    name = "storage_test",
     srcs = [
-        "recsort_comp_test.cpp",
+        "storage_test.cpp",
     ],
     deps = [
-        "//src:osort",
+        "//src:storage",
         "@gtest//:gtest",
         "@gtest//:gtest_main" # Only if hello_test.cc has no main()
     ],
