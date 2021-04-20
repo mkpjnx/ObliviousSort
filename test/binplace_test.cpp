@@ -40,7 +40,7 @@ TEST(BinplaceTest, TestBinplaceBasic){
   libUtil::BinAssign<int>(itemized, beta, Z);
   for (size_t i = 0; i < beta * Z; i++)
   {
-    printf("index: %ld \t item: %d \t bin: %ld\n", i, itemized[i].Elem, itemized[i].Group);
+    printf("index: %ld \t item: %d \t bin: %lld\n", i, itemized[i].Elem, itemized[i].Group);
     EXPECT_EQ(itemized[i].Group, i / Z );
   }
 }

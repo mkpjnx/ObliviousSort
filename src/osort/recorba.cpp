@@ -172,7 +172,7 @@ namespace libOSort
       auto rowEnd = rowBegin + beta2;
       shuffleHelper(offset, gamma, rowBegin, rowEnd);
     }
-    #pragma omp taskwait
+
 
     //transpose bucketOrder subrange
     transpose(begin, end, beta1);
@@ -184,7 +184,7 @@ namespace libOSort
       auto rowEnd = rowBegin + beta1;
       shuffleHelper(offset + log2(beta2), gamma, rowBegin, rowEnd);
     }
-    #pragma omp taskwait
+
   }
 
 template class RecORBA<int>;

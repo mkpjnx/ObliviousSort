@@ -61,7 +61,7 @@ TEST(QuickSortTest, TestParallel){
 }
 
 TEST(ORBATest, TestParallel){
-  size_t beta = 2048; //number of buckets
+  size_t beta = 512; //number of buckets
   size_t Z = 512; //bucket size
   size_t numElems = beta * Z / 2;
   

@@ -9,7 +9,7 @@
 
 TEST(OrbaTest, TestORBA){
   size_t beta = 8; //number of buckets
-  size_t Z = 32; //bucket size
+  size_t Z = 64; //bucket size
   size_t numElems = beta * Z / 2;
   
   auto elems = libStorage::VectorElementStore<int>(numElems);

@@ -32,11 +32,12 @@ void BinAssign(std::vector<Labeled<T>> &vec, size_t beta, size_t Z){
       offset = 0;
     }
 
-    //A normal item is marked excess: this is a bin overflow error
+    // A normal item is marked excess: this is a bin overflow error
     if(offset >= Z && vec[i].Type == ItemType::NORMAL){
       throw libUtil::binOverflowException();
     }
 
+    // otherwise, mark this as excess to be pruned out
     if (offset >= Z) {
       vec[i].Type = ItemType::EXCESS;
     }
