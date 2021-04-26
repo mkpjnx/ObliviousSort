@@ -19,6 +19,7 @@ We will implement Oblivious Random Assignment as described [here](https://eprint
 - [3/15 Technical Milestone](https://github.com/mkpjnx/ObliviousSort/blob/gh-pages/docs/Milestone_3_15.pdf)
 - [3/30 Technical Milestone](https://github.com/mkpjnx/ObliviousSort/blob/gh-pages/docs/Milestone_3_29.pdf)
 - [4/12 Technical Milestone](https://github.com/mkpjnx/ObliviousSort/blob/gh-pages/docs/Milestone_4_12.pdf)
+- [4/26 Technical Milestone](https://github.com/mkpjnx/ObliviousSort/blob/gh-pages/docs/Milestone_4_26.pdf)
 
 ### Markdown
 
