@@ -23,33 +23,18 @@ std::vector<int> randomVec(size_t len){
 }
 
 TEST(SortTest, TestBitonicBasic){
-  std::vector<int> vec = randomVec(16384);
-  libUtil::Sorting<int>::BitonicSort(vec,0,16384);
+  std::vector<int> vec = randomVec(1024 * 1024);
+  libUtil::Sorting<int>::BitonicSort(vec,0,1024 * 1024);
+  int last = -1;
   for (size_t i = 0; i < vec.size() - 1; i++)
   {
-    EXPECT_LE(vec[i], vec[i+1]);
+    EXPECT_EQ(vec[i], last+1);
+    last = vec[i];
   }
   
 }
 
-TEST(SortTest, TestRecBitonicBasic){
-  std::vector<int> vec = randomVec(16384);
-  libUtil::Sorting<int>::RecBitonicSort(vec,0,16384,true);
-  
-  /*
-  for (size_t i = 0; i < vec.size(); i++) {
-    printf("%d\n", vec[i]);
-  }
-  */
- 
-  for (size_t i = 0; i < vec.size() - 1; i++)
-  {
-    EXPECT_LE(vec[i], vec[i+1]);
-  }
-  
-}
-
-TEST(SortTest, TestOddEvenBasic){
+TEST(DISABLED_SortTest, TestOddEvenBasic){
   std::vector<int> vec = randomVec(100);
   libUtil::Sorting<int>::OddEvenMergeSort(vec,0,100);
   for (size_t i = 0; i < vec.size() - 1; i++)

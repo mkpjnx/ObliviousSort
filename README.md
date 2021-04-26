@@ -39,7 +39,7 @@ storage device
 **Requirements**:
 - C++ 11 or later
 - A Compiler which supports [OpenMP](https://www.openmp.org/) (e.g. GCC)
-- [Bazel](https://www.bazel.build/)
+- [Bazel](https://www.bazel.build/) (4.0+)
 
 To build all targets, run `$ bazel build ... `
 ### Test Overview
@@ -63,9 +63,14 @@ an additional set of *parallel* tests described in the following section.
 ### Parallel Tests and Benchmarking
 To build the parallel version, execute 
 ```
-$ bazel build --copt="-fopenmp" --linkopt='-lgomp' ...
+$ bazel build --use_omp ...
 ``` 
+**Parallel Test**
+Tests that the parallel version of quicksort and rec-orba are correct
 
+**Parallel Baseline**
+
+**Parallel Timing**
 
 ## Known Issues
 - Although the algorithms are templated. The current implementation only supports

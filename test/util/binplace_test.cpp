@@ -22,8 +22,8 @@ std::vector<int> randomVec(size_t len){
 }
 
 TEST(BinplaceTest, TestBinplaceBasic){
-  size_t beta = 8;
-  size_t Z = 4;
+  size_t beta = 1024;
+  size_t Z = 1024;
   size_t n = beta * Z;
   std::vector<int> vec = randomVec(n);
   std::vector<libUtil::Labeled<int>> itemized;
@@ -40,8 +40,9 @@ TEST(BinplaceTest, TestBinplaceBasic){
   libUtil::BinAssign<int>(itemized, beta, Z);
   for (size_t i = 0; i < beta * Z; i++)
   {
-    printf("index: %ld \t item: %d \t bin: %lld\n", i, itemized[i].Elem, itemized[i].Group);
+    // printf("index: %ld \t item: %d \t bin: %lld\n", i, itemized[i].Elem, itemized[i].Group);
     EXPECT_EQ(itemized[i].Group, i / Z );
+    EXPECT_EQ(itemized[i].Type, libUtil::ItemType::NORMAL);
   }
 }
 
