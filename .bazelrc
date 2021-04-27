@@ -1,3 +1,6 @@
+# alias custom build options
+# this allows them to be directly accessible from the command line
+
 build --flag_alias=use_omp=//build:use_omp
 build --flag_alias=use_gprof=//build:use_gprof
 build --flag_alias=skip_optimize=//build:skip_optimize

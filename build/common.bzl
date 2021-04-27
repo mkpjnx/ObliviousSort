@@ -1,3 +1,9 @@
+""" Global variables exported to other BUILD files
+
+COPTS are compiler options dependent on flags passed into bazel.
+LOPTS are linker options dependent also on bazel options
+"""
+
 COPTS = select({
             "//build:enable_omp": ["-fopenmp"],
             "//conditions:default": ["-Wno-unknown-pragmas"],

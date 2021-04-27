@@ -1,14 +1,18 @@
-load("//build:common.bzl", "COPTS")
-load("//build:common.bzl", "LOPTS")
+load("//build:common.bzl", "COPTS", "LOPTS")
 load("@rules_cc//cc:defs.bzl", "cc_test")
+
+# need to force link omp library, but not necessarily -fopenmp
+PARA_COPTS = COPTS
+
+PARA_LOPTS = LOPTS + ["-lgomp"]
 
 cc_test(
     name = "parallel_test",
     srcs = [
         "parallel_test.cpp",
     ],
-    copts = COPTS + ["-fopenmp"],
-    linkopts = LOPTS + ["-lgomp"],
+    copts = PARA_COPTS,
+    linkopts = PARA_LOPTS,
     deps = [
         "//src:osort",
         "@gtest",
@@ -21,8 +25,8 @@ cc_binary(
     srcs = [
         "parallel_timing.cpp",
     ],
-    copts = COPTS + ["-fopenmp"],
-    linkopts = LOPTS + ["-lgomp"],
+    copts = PARA_COPTS,
+    linkopts = PARA_LOPTS,
     deps = [
         "//src:osort",
         "@gtest",
@@ -35,8 +39,8 @@ cc_binary(
     srcs = [
         "parallel_baseline.cpp",
     ],
-    copts = COPTS + ["-fopenmp"],
-    linkopts = LOPTS + ["-lgomp"],
+    copts = PARA_COPTS,
+    linkopts = PARA_LOPTS,
     deps = [
         "//src:util",
         "@gtest",

@@ -34,14 +34,32 @@ algorithm, as well as two methods of sorting the shuffled array.
 storage device
 - `recsort` Implements the Rec-Sort algorithm described [here](arxiv.org/pdf/2008.00332.pdf#page=30).
 
-## Running Tests
+## Building
 
 **Requirements**:
 - C++ 11 or later
 - A Compiler which supports [OpenMP](https://www.openmp.org/) (e.g. GCC)
 - [Bazel](https://www.bazel.build/) (4.0+)
 
-To build all targets, run `$ bazel build ... `
+To build all targets, run
+
+```
+$ bazel build ...
+```
+
+We currently support the following custom build flags
+- **--skip_optimize**: passing in this flags removes `-O3` from the compilation flags, may be helpful for debugging
+- **--use_gprof**: passing in this flags adds `-pg` to compilation and linking, enables use of `gprof` for profiling
+- **--use_omp**: passing in this flags let's OpenMP generate parallel code, see below for details.
+
+For example, to avoid optimization and enable profiling, build using the following
+```
+$ bazel build --skip_optimize --use_gprof ...
+```
+
+## Running Tests
+After build succeeds, the compiled binaries are located in `bazel-bin/test`
+
 ### Test Overview
 Tests are divided into groups representing the libraries they test, as well as
 an additional set of *parallel* tests described in the following section.
