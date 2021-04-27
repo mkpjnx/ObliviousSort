@@ -1,5 +1,4 @@
-load("//build:common.bzl", "COPTS")
-load("//build:common.bzl", "LOPTS")
+load("//build:common.bzl", "COPTS", "LOPTS")
 load("@rules_cc//cc:defs.bzl", "cc_library")
 
 cc_library(
