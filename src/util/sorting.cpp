@@ -38,10 +38,17 @@ void SORT_TYPE::BitonicSort(std::vector<T> &vec, size_t begin, size_t end){
   }
 }
 
-/*
- * Recursive Bitonic Sort
- */
-int powerTwo(size_t n) { // find smallest larger power of two
+
+
+/**
+ *
+ * ----- Recursive Bitonic Sort -----
+ *
+ **/
+/** 
+ * Given a number, return the smallest larger power of 2
+ **/
+int powerTwo(size_t n) {
   if (n && !(n & (n - 1))) { return n; }
 
   size_t p = 1;
@@ -50,6 +57,8 @@ int powerTwo(size_t n) { // find smallest larger power of two
   return p;
 }
 
+
+/** ----- Bitonic Merge ----- **/
 SORT_TEMPLATE_ARGS
 void bitonicMerge(std::vector<T> &vec, Comp &c, size_t begin, size_t end, bool flag) {
   size_t n = end - begin;
@@ -70,15 +79,15 @@ void bitonicMerge(std::vector<T> &vec, Comp &c, size_t begin, size_t end, bool f
     size_t cols = powerTwo(ceil(sqrt(n))); // round sqrt of vector up to nearest power of 2
     size_t rows = n / cols + (n % cols != 0 ? 1 : 0);
 
-    // get smallest element
-    T smallestElement = vec[end - 1];
-    if (c(vec[begin], vec[end - 1])) {
-      smallestElement = vec[begin];
+    // get filler
+    T filler = vec[end - 1];
+    if ((c(vec[begin], vec[end - 1]) && flag) || (c(vec[end - 1], vec[begin]) && !flag)) {
+      filler = vec[begin];
     }
 
     // create matrix
-    std::vector<std::vector<T> > K(rows, std::vector<T>(cols, smallestElement));
-    std::vector<std::vector<T> > J(cols, std::vector<T>(rows, smallestElement));
+    std::vector<std::vector<T> > K(rows, std::vector<T>(cols, filler));
+    std::vector<std::vector<T> > J(cols, std::vector<T>(rows, filler));
 
     // fill matrix
     size_t curr = begin;
@@ -88,12 +97,10 @@ void bitonicMerge(std::vector<T> &vec, Comp &c, size_t begin, size_t end, bool f
         J[j][i] = vec[curr];
         curr++;
 
-        if (curr >= end)
-          break;
+        if (curr >= end) break;
       }
     }
 
-    // *change to run in parallel
     #pragma omp parallel for
     for (size_t col = 0; col < cols; col++) {
       bitonicMerge(J[col], c, 0, rows, flag);
@@ -107,15 +114,14 @@ void bitonicMerge(std::vector<T> &vec, Comp &c, size_t begin, size_t end, bool f
       }
     }
 
-    // *change to run in parallel
     #pragma omp parallel for
     for (size_t r = 0; r < rows; r++) {
       bitonicMerge(K[r], c, 0, cols, flag);
     }
 
-    // concatenate into a vector (need to improve)
+    // concatenate into a vector
     size_t num_filler = rows * cols - n;
-    std::vector<T> temp (rows * cols, smallestElement);
+    std::vector<T> temp (rows * cols, filler);
     curr = 0;
     for (size_t i = 0; i < rows; i++) {
       for (size_t j = 0; j < cols; j++) {
@@ -131,6 +137,14 @@ void bitonicMerge(std::vector<T> &vec, Comp &c, size_t begin, size_t end, bool f
   }
 }
 
+
+/** ----- Recursive Bitonic Sort (main) ----- 
+ * Input:
+ *   vec - input data, length needs to be power of two
+ *   flag - true for increasing sort, false for decreasing sort
+ * Output:
+ *   sorted input vector in-place
+ **/
 SORT_TEMPLATE_ARGS
 void SORT_TYPE::RecBitonicSort(std::vector<T> &vec, size_t begin, size_t end, bool flag){
   Comp c;
@@ -140,13 +154,10 @@ void SORT_TYPE::RecBitonicSort(std::vector<T> &vec, size_t begin, size_t end, bo
     size_t mid = begin + n / 2;
     
     // Fork
-    #pragma omp parallel
-    {
-      RecBitonicSort(vec, begin, mid, flag);
-      RecBitonicSort(vec, mid, end, !flag);
-    }
+    RecBitonicSort(vec, begin, mid, flag);
+    RecBitonicSort(vec, mid, end, !flag);
+    
     // Join
-
     bitonicMerge(vec, c, begin, end, flag);
   }
 }

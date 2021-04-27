@@ -43,3 +43,18 @@ cc_test(
         "@gtest//:gtest_main",  # Only if hello_test.cc has no main()
     ],
 )
+
+cc_test(
+    name = "meta_orba_test",
+    srcs = [
+        "meta_orba_test.cpp",
+    ],
+    copts = COPTS,
+    linkopts = LOPTS,
+    deps = [
+        "//src:util",
+        "@gtest",
+        "@gtest//:gtest_main",  # Only if hello_test.cc has no main()
+    ],
+)
+

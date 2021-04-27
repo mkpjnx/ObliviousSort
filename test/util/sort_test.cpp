@@ -34,6 +34,19 @@ TEST(SortTest, TestBitonicBasic){
   
 }
 
+TEST(SortTest, TestRecBitonicBasic){
+  std::vector<int> vec = randomVec(1024 * 128);
+  libUtil::Sorting<int>::RecBitonicSort(vec,0,1024 * 128,true);
+  
+  int last = -1;
+  for (size_t i = 0; i < vec.size() - 1; i++)
+  {
+    EXPECT_EQ(vec[i], last+1);
+    last = vec[i];
+  }
+}
+
+
 TEST(DISABLED_SortTest, TestOddEvenBasic){
   std::vector<int> vec = randomVec(100);
   libUtil::Sorting<int>::OddEvenMergeSort(vec,0,100);
