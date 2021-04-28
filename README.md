@@ -65,18 +65,18 @@ Tests are divided into groups representing the libraries they test, as well as
 an additional set of *parallel* tests described in the following section.
 
 **Util Tests**  
-- sort_test
-- binplace_test
-- transpose_test
+- *sort_test*: Tests vector-based bitonic sort
+- *binplace_test*: Tests the bin placement algorithm and overflow behavior
+- *transpose_test*: Tests the cache-oblivious transpose algorithm
 
 **Storage Tests**
-- storage_test 
+- *storage_test*: Tests that the vector implementations of the storage interfaces behave as expected
 
 **ORBA Tests**
-- orba_test: ensure that when orba shuffles unique items, the same unique items are returned
-- osort_test: ensure that rec_orba followed by quicksort does sort the items
-- recsort_test: ensure that rec_orba followed by rec_sort does sort the items
-- overflow_test: measures the overflow rate at different bin sizes
+- *orba_test*: Tests that when orba shuffles unique items, the same unique items are returned
+- *osort_test*: Tests that rec_orba followed by quicksort does sort the items
+- *recsort_test*: Tests that rec_orba followed by rec_sort does sort the items
+- *overflow_test*: Measures the overflow rate at different bin sizes
 
 ### Parallel Tests and Benchmarking
 To build the parallel version, execute 
@@ -87,8 +87,11 @@ $ bazel build --use_omp ...
 Tests that the parallel version of quicksort and rec-orba are correct
 
 **Parallel Baseline**
+Measure OpenMP thread and task based parallel constructs, and how they scale
+with respect to cores, problem size, etc.
 
 **Parallel Timing**
+Measures how the parallel version of ORBA scales with respect to cores, problem size, etc.
 
 ## Known Issues
 - Although the algorithms are templated. The current implementation only supports

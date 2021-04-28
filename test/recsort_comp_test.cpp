@@ -65,14 +65,14 @@ void recORBAiter(size_t beta, size_t Z) {
   printf("\n");
 }
 
-TEST(SortTest, TestRedBitonicComp){
+TEST(SortTest, DISASBLED_TestRedBitonicComp){
   size_t beta = 64; //number of buckets
   size_t Z = 256; //bucket size
   
   recBitonicIter(beta * Z);
 }
 
-TEST(SortTest, TestRecORBAComp){
+TEST(SortTest, DISASBLED_TestRecORBAComp){
   size_t beta = 64; //number of buckets
   size_t Z = 256; //bucket size
   

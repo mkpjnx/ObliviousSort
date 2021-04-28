@@ -7,6 +7,14 @@
 #include "src/include/osort/recorba.h"
 #include "src/include/util/common.h"
 
+/**
+ * @brief Count overflow rate given the parameters
+ * 
+ * @param numElems number of elements, must be power of 2
+ * @param Z bin size, must be power of 2
+ * @param runs number of trials to run
+ * @return number of times we overflowed 
+ */
 size_t testBucket(size_t numElems, size_t Z, size_t runs){
   size_t beta = 2*numElems/Z; //number of buckets
   
@@ -33,10 +41,15 @@ size_t testBucket(size_t numElems, size_t Z, size_t runs){
   return count;
 }
 
+/**
+ * @brief Measure overflow rate with a "small" number of elements
+ * 
+ */
 TEST(OverflowTest, TestOverflow){
-  size_t numElems = 1024;
+  size_t numElems = 1024 * 8;
+  size_t maxZ = 2048;
   size_t runs = 100;
-  for(size_t Z = 2; Z <= numElems; Z *= 2) {
+  for(size_t Z = 2; Z <= maxZ; Z *= 2) {
     size_t count = testBucket(numElems, Z, runs);
     printf("Z=%ld \t overflow rate: %ld/%ld\n", Z, count, runs);
   }

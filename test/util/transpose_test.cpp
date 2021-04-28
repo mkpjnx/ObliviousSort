@@ -18,8 +18,8 @@ void printMatrix(std::vector<int> M, size_t h){
 }
 
 TEST(BinplaceTest, TestBinplaceBasic){
-  size_t h = 30;
-  size_t w = 30;
+  size_t h = 300;
+  size_t w = 300;
   std::vector<int> M;
   M.resize(h*w);
 
