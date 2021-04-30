@@ -84,7 +84,7 @@ void thrScaling(){
     std::cout << numThreads << ",";
     for(size_t trial = 0; trial < ttestTrials; trial++){
       double t = timeOrba(ttestN, (size_t) numThreads, bucketSize);
-      std::cout << t << (trial < (ntestTrials - 1) ? "," : "\n");
+      std::cout << t << (trial < (ttestTrials - 1) ? "," : "\n");
     }
   }
   std::cout << "\nDone!\n";
