@@ -48,12 +48,8 @@ double timeOrba(size_t N, size_t numThreads, size_t bucketSize){
 
   omp_set_num_threads(numThreads);
   auto parastart = std::chrono::steady_clock::now();
-  #pragma omp parallel
-  {
-    #pragma omp single
-    orba.Shuffle(gamma);
+  orba.Shuffle(gamma);
 
-  }
   auto paraend = std::chrono::steady_clock::now();
   std::chrono::duration<double> elapsed_seconds = paraend-parastart;
   return elapsed_seconds.count();
@@ -68,11 +64,11 @@ void numScaling(){
             << "Running " << ntestTrials << " trials each\n\n" 
             << "N, time(s)\n";
   for(size_t N = ntestMin; N < ntestMax; N*=2){
-    double t = 0;
+    std::cout << N << ",";
     for(size_t trial = 0; trial < ntestTrials; trial++){
-      t += timeOrba(N, numThreads, bucketSize);
+      double t = timeOrba(N, numThreads, bucketSize);
+      std::cout <<  t << (trial < (ntestTrials - 1) ? "," : "\n");
     }
-    std::cout << N << "," <<  t / ntestTrials << "\n";
   }
   std::cout << "\nDone!\n";
 }
@@ -85,11 +81,11 @@ void thrScaling(){
             << "Running " << ttestTrials << " trials each\n\n" 
             << "#threads, time(s)\n";
   for(int numThreads = 1; numThreads <= omp_get_num_procs(); numThreads++){
-    double t = 0;
+    std::cout << numThreads << ",";
     for(size_t trial = 0; trial < ttestTrials; trial++){
-      t += timeOrba(ttestN, (size_t) numThreads, bucketSize);
+      double t = timeOrba(ttestN, (size_t) numThreads, bucketSize);
+      std::cout << t << (trial < (ntestTrials - 1) ? "," : "\n");
     }
-    std::cout << numThreads << "," <<  t / ttestTrials << "\n";
   }
   std::cout << "\nDone!\n";
 }

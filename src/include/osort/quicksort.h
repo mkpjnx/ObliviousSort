@@ -14,23 +14,31 @@ namespace libOSort
     public:
       static void Sort(libStorage::ElementStorage<T> &elems,
       elem_id_t begin, elem_id_t end){
+        #pragma omp parallel
+        {
+          #pragma omp single
+          sort_help(elems, begin, end);
+        }
+      }
+    private:
+      static void sort_help(libStorage::ElementStorage<T> &elems,
+      elem_id_t begin, elem_id_t end){
         if(end - begin <= 1){
           return;
         }
         elem_id_t pivotInd = partition(elems, begin, end);
         if (end - begin > QSORT_GRANULARITY) {
           #pragma omp task shared(elems)
-          Sort(elems, begin, pivotInd);
+          sort_help(elems, begin, pivotInd);
           #pragma omp task shared(elems)
-          Sort(elems, pivotInd+1, end);
+          sort_help(elems, pivotInd+1, end);
           #pragma omp taskwait
         } else {
-          Sort(elems, begin, pivotInd);
-          Sort(elems, pivotInd+1, end);
+          sort_help(elems, begin, pivotInd);
+          sort_help(elems, pivotInd+1, end);
         }
 
       }
-    private:
       static elem_id_t partition(libStorage::ElementStorage<T> &elems,
       elem_id_t begin, elem_id_t end) {
         T pivot, current, toSwap;

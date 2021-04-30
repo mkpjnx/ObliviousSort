@@ -79,8 +79,18 @@ namespace libOSort
       bucketOrder_[bid] = bid;
     }
 
-    //invoke helper function for recursive shuffling
-    shuffleHelper(0 , gamma, 0, bucketOrder_.size());
+    bool err = false;
+    #pragma omp parallel shared(bucketOrder_)
+    {
+      #pragma omp single
+      try {
+        shuffleHelper(0 , gamma, 0, bucketOrder_.size());
+      } catch(libUtil::binOverflowException &e) {
+        err = true;
+      }
+    }
+    if (err) throw libUtil::binOverflowException();
+
     saveData();
     return true;
   }
@@ -165,26 +175,42 @@ namespace libOSort
     beta1 = 1UL << beta1;
     size_t beta2 = numBuckets / beta1;
 
+    bool success;
+    
+    success = true;
     //recurse every row
-    #pragma omp taskloop shared(bucketOrder_)
+    #pragma omp taskloop shared(bucketOrder_, success)
     for (size_t b1 = 0; b1 < beta1; b1 ++) {
       auto rowBegin = begin + b1 * beta2;
       auto rowEnd = rowBegin + beta2;
-      shuffleHelper(offset, gamma, rowBegin, rowEnd);
+  
+      try{
+        shuffleHelper(offset, gamma, rowBegin, rowEnd);
+      } catch(libUtil::binOverflowException &e) {
+        success = false;
+      }
+  
     }
+
+    if (!success) throw libUtil::binOverflowException();
 
 
     //transpose bucketOrder subrange
     transpose(begin, end, beta1);
 
+    success = true;
     //recurse every column
-    #pragma omp taskloop shared(bucketOrder_)
+    #pragma omp taskloop shared(bucketOrder_, success)
     for (size_t b2 = 0; b2 < beta2; b2 ++) {
       auto rowBegin = begin + b2 * beta1;
       auto rowEnd = rowBegin + beta1;
-      shuffleHelper(offset + log2(beta2), gamma, rowBegin, rowEnd);
+      try{
+        shuffleHelper(offset + log2(beta2), gamma, rowBegin, rowEnd);
+      } catch(libUtil::binOverflowException &e) {
+        success = false;
+      }
     }
-
+    if (!success) throw libUtil::binOverflowException();
   }
 
 template class RecORBA<int>;

@@ -27,12 +27,11 @@ TEST(QuickSortTest, TestParallel){
     elems.WriteElement(eid, num);
   }
 
+  omp_set_num_threads(omp_get_num_procs());
   auto start = std::chrono::steady_clock::now();
-  #pragma omp parallel
-  { 
-    #pragma omp single
-    libOSort::ElemQuicksort<int>::Sort(elems, 0, numElems);
-  }
+  
+  libOSort::ElemQuicksort<int>::Sort(elems, 0, numElems);
+
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<double> elapsed_seconds = end-start;
   std::cout << "parallel elapsed time: " << elapsed_seconds.count() << "s\n";
@@ -44,6 +43,8 @@ TEST(QuickSortTest, TestParallel){
     int num = g();
     elems.WriteElement(eid, num);
   }
+
+  omp_set_num_threads(1);
 
   auto ser_start = std::chrono::steady_clock::now();
   libOSort::ElemQuicksort<int>::Sort(elems, 0, numElems);
@@ -79,17 +80,15 @@ TEST(ORBATest, TestParallel){
 
   auto orba = libOSort::RecORBA<int>(elems, storage);
 
+  omp_set_num_threads(omp_get_num_procs());
   auto parastart = std::chrono::steady_clock::now();
-  #pragma omp parallel
-  {
-    #pragma omp single
-    orba.Shuffle(4);
-  }
+  orba.Shuffle(4);
   auto paraend = std::chrono::steady_clock::now();
 
   std::chrono::duration<double> elapsed_seconds = paraend-parastart;
   std::cout << "parallel elapsed time: " << elapsed_seconds.count() << "s\n";
 
+  omp_set_num_threads(1);
   auto serstart = std::chrono::steady_clock::now();
   orba.Shuffle(4);
   auto serend = std::chrono::steady_clock::now();
@@ -97,11 +96,8 @@ TEST(ORBATest, TestParallel){
   elapsed_seconds = serend-serstart;
   std::cout << "serial elapsed time: " << elapsed_seconds.count() << "s\n";
   
-  #pragma omp parallel
-  { 
-    #pragma omp single
-    libOSort::ElemQuicksort<int>::Sort(elems, 0, numElems);
-  }
+
+  libOSort::ElemQuicksort<int>::Sort(elems, 0, numElems);
 
   int prev = -1;
   for (size_t eid = 0; eid < numElems; eid++) {

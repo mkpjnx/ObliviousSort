@@ -30,11 +30,9 @@ TEST(OSortTest, TestQuickSort){
   auto orba = libOSort::RecORBA<int>(elems, storage);
   orba.Shuffle(beta);
   auto start = std::chrono::steady_clock::now();
-  #pragma omp parallel
-  {
-    #pragma omp single
-    libOSort::ElemQuicksort<int>::Sort(elems, 0, numElems);
-  }
+
+  libOSort::ElemQuicksort<int>::Sort(elems, 0, numElems);
+
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<double> elapsed_seconds = end-start;
   std::cout << "***\t\tQuickSort on " << numElems << " elems took: "
@@ -71,13 +69,10 @@ TEST(OSortTest, TestOSort){
 
   
   auto start = std::chrono::steady_clock::now();
-  #pragma omp parallel
-  {
-    #pragma omp single
-    orba.Shuffle(gamma);
-    #pragma omp single
-    libOSort::ElemQuicksort<int>::Sort(elems, 0, numElems);
-  }
+
+  orba.Shuffle(gamma);
+  libOSort::ElemQuicksort<int>::Sort(elems, 0, numElems);
+
   auto end = std::chrono::steady_clock::now();
   std::chrono::duration<double> elapsed_seconds = end-start;
   std::cout << "***\t\tBucket Oblivious Sort on " << numElems << " elems took: "
