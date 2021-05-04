@@ -11,8 +11,9 @@
 #include "src/include/osort/quicksort.h"
 #include "src/include/util/common.h"
 
-bool testNum = false;
 bool testThr = false;
+bool testNum = false;
+bool testGam = false;
 
 size_t ttestN = 10000;
 size_t ttestTrials = 3;
@@ -22,10 +23,14 @@ size_t ntestMin = 1000;
 size_t ntestMax = 100000;
 size_t ntestTrials = 3;
 
+size_t gtestMin = 2;
+size_t gtestN = 1000000;
+size_t gtestTrials = 3;
+
 size_t bucketSize = 512;
 
 //Returns the time taken to run Rec-ORBA using the following specifications
-double timeOrba(size_t N, size_t numThreads, size_t bucketSize){
+double timeOrba(size_t N, size_t numThreads, size_t bucketSize, size_t gamma){
   auto elems = libStorage::VectorElementStore<int>(N);
   size_t paddedN = 1UL << (size_t)(std::ceil(std::log2(N)));
 
@@ -34,8 +39,7 @@ double timeOrba(size_t N, size_t numThreads, size_t bucketSize){
   auto storage = libStorage::VectorBucketStore<libUtil::Labeled<int>>(numBuckets, bucketSize);
 
   // set gamma = log_2(n), padded to pow2
-  size_t gamma = (size_t)(std::ceil(std::log2(N)));
-  gamma =  1UL << (size_t)(std::ceil(std::log2(gamma)));
+
   omp_set_num_threads(omp_get_num_procs());
   #pragma omp parallel for shared(elems) schedule(static)
   for (size_t eid = 0; eid < elems.Size; eid++) {
@@ -44,11 +48,12 @@ double timeOrba(size_t N, size_t numThreads, size_t bucketSize){
   }
 
   auto orba = libOSort::RecORBA<int>(elems, storage);
-  //randomElems(elems);
 
   omp_set_num_threads(numThreads);
   auto parastart = std::chrono::steady_clock::now();
   orba.Shuffle(gamma);
+
+  //libOSort::ElemQuicksort<int>::Sort(elems, 0, N);
 
   auto paraend = std::chrono::steady_clock::now();
   std::chrono::duration<double> elapsed_seconds = paraend-parastart;
@@ -65,15 +70,42 @@ void numScaling(){
             << "N, time(s)\n";
   for(size_t N = ntestMin; N < ntestMax; N*=2){
     std::cout << N << ",";
+
+    size_t gamma = (size_t)(std::ceil(std::log2(N)));
+    gamma =  1UL << (size_t)(std::ceil(std::log2(gamma)));
+
     for(size_t trial = 0; trial < ntestTrials; trial++){
-      double t = timeOrba(N, numThreads, bucketSize);
+      double t = timeOrba(N, numThreads, bucketSize, gamma);
       std::cout <<  t << (trial < (ntestTrials - 1) ? "," : "\n");
     }
   }
   std::cout << "\nDone!\n";
 }
 
+void gamScaling(){
+  size_t numThreads = 1; //(size_t)omp_get_num_procs();
+  size_t maxGam = (gtestN / bucketSize);
+
+  std::cout << "************************\n"
+            << "** Gamma Scaling test **\n"
+            << "************************\n"
+            << "N = " << gtestN << "\n"
+            << "Running " << gtestTrials << " trials each\n\n" 
+            << "#threads, time(s)\n";
+  for(size_t gamma = 2; gamma <= maxGam; gamma*=2){
+    std::cout << gamma << ",";
+    for(size_t trial = 0; trial < gtestTrials; trial++){
+      double t = timeOrba(gtestN, (size_t) numThreads, bucketSize, gamma);
+      std::cout << t << (trial < (gtestTrials - 1) ? "," : "\n");
+    }
+  }
+  std::cout << "\nDone!\n";
+}
+
 void thrScaling(){
+  size_t gamma = (size_t)(std::ceil(std::log2(ttestN)));
+  gamma =  1UL << (size_t)(std::ceil(std::log2(gamma)));
+
   std::cout << "**********************\n"
             << "** Thr Scaling test **\n"
             << "**********************\n"
@@ -83,7 +115,7 @@ void thrScaling(){
   for(int numThreads = 1; numThreads <= omp_get_num_procs(); numThreads++){
     std::cout << numThreads << ",";
     for(size_t trial = 0; trial < ttestTrials; trial++){
-      double t = timeOrba(ttestN, (size_t) numThreads, bucketSize);
+      double t = timeOrba(ttestN, (size_t) numThreads, bucketSize, gamma);
       std::cout << t << (trial < (ttestTrials - 1) ? "," : "\n");
     }
   }
@@ -106,9 +138,10 @@ void randomElems(libStorage::VectorElementStore<int> &elems){
 
 void printUsage(char **argv){
   std::cout << "Usage: " << argv[0]
-            << " [-n min max trials] [-t n trials] [-b bucket size]\n";
+            << " [-n min max trials] [-t n trials] [-g n trials] [-b bucket size]\n";
   std::cout << "\t-n\tTest scaling with respect to array size. Doubling each time\n"
-            << "\t-t\tTest scaling with respect to number of threads\n";
+            << "\t-t\tTest scaling with respect to number of threads\n"
+            << "\t-g\tTest scaling with respect to gamma\n";
   exit(0);
 }
 
@@ -123,6 +156,12 @@ int main(int argc, char **argv) {
       ntestMax = atoi(argv[++i]);
       ntestTrials = atoi(argv[++i]);
       if(!ntestMin || ntestMax < ntestMin || !ntestTrials) printUsage(argv);
+    } else if (std::string(argv[i]) == "-g") {
+      testGam = true;
+      if(i+2 >= argc) printUsage(argv);
+      gtestN = atoi(argv[++i]);
+      gtestTrials = atoi(argv[++i]);
+      if(!gtestTrials || !gtestN) printUsage(argv);
     } else if (std::string(argv[i]) == "-t") {
       testThr = true;
       if(i+2 >= argc) printUsage(argv);
@@ -140,5 +179,6 @@ int main(int argc, char **argv) {
 
   if (testNum) numScaling();
   if (testThr) thrScaling();
+  if (testGam) gamScaling();
   return 0;
 }
